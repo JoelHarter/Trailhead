@@ -1,0 +1,62 @@
+{
+  "format_version": "1.26.0",
+  "minecraft:block": {
+    "description": {
+      "identifier": "ns:sequoia_sapling"
+    },
+    "components": {
+      "minecraft:geometry": "minecraft:geometry.cross",
+      "minecraft:material_instances": {
+        "*": {
+          "texture": "sequoia_sapling",
+          "render_method": "alpha_test",
+          "ambient_occlusion": false,
+          "face_dimming": false
+        }
+      },
+      "minecraft:collision_box": false,
+      "minecraft:selection_box": {
+        "origin": [
+          -5,
+          0,
+          -5
+        ],
+        "size": [
+          10,
+          13,
+          10
+        ]
+      },
+      "minecraft:light_dampening": 0,
+      "minecraft:destructible_by_mining": {
+        "seconds_to_destroy": 0
+      },
+      "minecraft:destructible_by_explosion": {
+        "explosion_resistance": 0
+      },
+      "minecraft:map_color": "#2f6b2a",
+      "minecraft:placement_filter": {
+        "conditions": [
+          {
+            "allowed_faces": [
+              "up"
+            ],
+            "block_filter": [
+              "minecraft:dirt",
+              "minecraft:grass_block",
+              "minecraft:podzol",
+              "minecraft:coarse_dirt",
+              "minecraft:farmland",
+              "minecraft:moss_block",
+              "minecraft:mycelium",
+              "minecraft:dirt_with_roots",
+              "minecraft:mud",
+              "minecraft:muddy_mangrove_roots"
+            ]
+          }
+        ]
+      },
+      "ns:sapling": {}
+    }
+  }
+}

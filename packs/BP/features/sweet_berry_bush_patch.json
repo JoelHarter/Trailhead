@@ -1,0 +1,27 @@
+{
+  "format_version": "1.13.0",
+  "minecraft:scatter_feature": {
+    "description": {
+      "identifier": "ns:sweet_berry_bush_patch"
+    },
+    "places_feature": "ns:sweet_berry_bush_block",
+    "project_input_to_floor": true,
+    "iterations": 12,
+    "coordinate_eval_order": "xzy",
+    "x": {
+      "distribution": "gaussian",
+      "extent": [
+        -5,
+        5
+      ]
+    },
+    "z": {
+      "distribution": "gaussian",
+      "extent": [
+        -5,
+        5
+      ]
+    },
+    "y": 0
+  }
+}

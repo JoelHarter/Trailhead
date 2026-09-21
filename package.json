@@ -1,0 +1,33 @@
+{
+  "name": "trailhead",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Trailhead: a Minecraft Bedrock add-on inspired by the wild places of North America.",
+  "type": "module",
+  "scripts": {
+    "build": "node tools/build.mjs",
+    "check": "tsc --noEmit",
+    "deploy": "node tools/build.mjs && node tools/deploy.mjs",
+    "dev": "node tools/build.mjs && node tools/deploy.mjs && node tools/server.mjs restart",
+    "reload": "node tools/build.mjs && node tools/deploy.mjs && node tools/server.mjs reload",
+    "server:start": "node tools/server.mjs start",
+    "server:stop": "node tools/server.mjs stop",
+    "server:restart": "node tools/server.mjs restart",
+    "server:logs": "node tools/server.mjs logs",
+    "server:status": "node tools/server.mjs status",
+    "world:reset": "node tools/server.mjs reset-world",
+    "test": "node --test \"test/**/*.test.ts\"",
+    "view": "node tools/view.mjs",
+    "probe": "node tools/server.mjs probe",
+    "vm:stop": "node tools/server.mjs vm-stop",
+    "test:blocks": "node tools/server.mjs test-blocks"
+  },
+  "devDependencies": {
+    "@minecraft/server": "2.10.0",
+    "@minecraft/server-ui": "2.2.0",
+    "@minecraft/vanilla-data": "1.26.51",
+    "esbuild": "^0.28.2",
+    "typescript": "^7.0.2",
+    "@types/node": "^24.0.0"
+  }
+}

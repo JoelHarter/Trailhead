@@ -1,0 +1,34 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Trailhead",
+    "description": "Wild places of North America. Behavior pack.",
+    "uuid": "f6aefe0b-f1e7-4015-b112-fefeb16ed186",
+    "version": [0, 1, 0],
+    "min_engine_version": [1, 26, 50]
+  },
+  "modules": [
+    {
+      "type": "data",
+      "uuid": "efeacbed-742d-46f4-8ff2-9bdabeceaca7",
+      "version": [0, 1, 0]
+    },
+    {
+      "type": "script",
+      "language": "javascript",
+      "entry": "scripts/main.js",
+      "uuid": "5cb8062d-2c37-4056-8afb-ca1c281b80c9",
+      "version": [0, 1, 0]
+    }
+  ],
+  "dependencies": [
+    {
+      "uuid": "e2f84600-b8cc-4ca8-a6bf-677aaf191790",
+      "version": [0, 1, 0]
+    },
+    {
+      "module_name": "@minecraft/server",
+      "version": "2.10.0"
+    }
+  ]
+}

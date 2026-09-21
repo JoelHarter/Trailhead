@@ -1,0 +1,26 @@
+{
+  "format_version": "1.21.100",
+  "minecraft:recipe_shapeless": {
+    "description": {
+      "identifier": "ns:sequoia_planks_from_sequoia_log"
+    },
+    "tags": [
+      "crafting_table"
+    ],
+    "group": "planks",
+    "ingredients": [
+      {
+        "item": "ns:sequoia_log"
+      }
+    ],
+    "unlock": [
+      {
+        "item": "ns:sequoia_log"
+      }
+    ],
+    "result": {
+      "item": "ns:sequoia_planks",
+      "count": 4
+    }
+  }
+}

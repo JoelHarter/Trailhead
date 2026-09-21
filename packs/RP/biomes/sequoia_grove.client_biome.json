@@ -1,0 +1,35 @@
+{
+  "format_version": "1.21.120",
+  "minecraft:client_biome": {
+    "description": {
+      "identifier": "ns:sequoia_grove"
+    },
+    "components": {
+      "minecraft:sky_color": {
+        "sky_color": "#78A7FF"
+      },
+      "minecraft:fog_appearance": {
+        "fog_identifier": "ns:fog_sequoia_grove"
+      },
+      "minecraft:water_appearance": {
+        "surface_color": "#3F76E4"
+      },
+      "minecraft:grass_appearance": {
+        "color": "#49874B"
+      },
+      "minecraft:foliage_appearance": {
+        "color": "#346E42"
+      },
+      "minecraft:ambient_sounds": {
+        "underwater_addition": {
+          "asset": "ambient.underwater.additions",
+          "chance": 0.01
+        },
+        "underwater_loop": "ambient.underwater.loop"
+      },
+      "minecraft:biome_music": {
+        "music_definition": "mega_taiga"
+      }
+    }
+  }
+}

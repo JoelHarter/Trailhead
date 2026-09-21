@@ -1,0 +1,24 @@
+{
+  "format_version": "1.21.40",
+  "ns:sequoia_planks": {
+    "sound": "wood"
+  },
+  "ns:sequoia_log": {
+    "sound": "wood"
+  },
+  "ns:sequoia_wood": {
+    "sound": "wood"
+  },
+  "ns:stripped_sequoia_log": {
+    "sound": "wood"
+  },
+  "ns:stripped_sequoia_wood": {
+    "sound": "wood"
+  },
+  "ns:sequoia_leaves": {
+    "sound": "grass"
+  },
+  "ns:sequoia_sapling": {
+    "sound": "grass"
+  }
+}

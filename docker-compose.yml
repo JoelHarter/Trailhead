@@ -1,0 +1,40 @@
+# Headless Bedrock Dedicated Server for development.
+# Use the npm scripts (npm run server:start, etc.) rather than calling docker directly.
+#
+# Server data lives in a Docker-managed volume inside the Linux VM, NOT in a shared Mac folder.
+# The VM (Colima) is started with --mount none, so it cannot see any Mac files at all.
+# Packs are copied in by tools/deploy.mjs using "docker cp".
+services:
+  bedrock:
+    image: itzg/minecraft-bedrock-server:latest
+    container_name: trailhead-bedrock
+    environment:
+      EULA: "TRUE"
+      VERSION: "LATEST"
+      SERVER_NAME: "Trailhead Dev"
+      LEVEL_NAME: "trailhead-dev"
+      GAMEMODE: "creative"
+      DIFFICULTY: "normal"
+      ALLOW_CHEATS: "true"
+      ALLOW_LIST: "false"
+      # Bedrock 1.26.5x defaults to the new "nethernet" transport (TCP 19132 + discovery on UDP 7551).
+      # "raknet" is the classic UDP 19132 protocol that the phone's Add Server screen connects to.
+      TRANSPORT: "raknet"
+      DEFAULT_PLAYER_PERMISSION_LEVEL: "operator"
+      TEXTUREPACK_REQUIRED: "true"
+      CONTENT_LOG_FILE_ENABLED: "true"
+      CONTENT_LOG_CONSOLE_OUTPUT_ENABLED: "true"
+      VIEW_DISTANCE: "12"
+      TICK_DISTANCE: "4"
+      MAX_PLAYERS: "4"
+    ports:
+      - "19132:19132/udp"
+    volumes:
+      - data:/data
+    stdin_open: true
+    tty: true
+    restart: "no"
+
+volumes:
+  data:
+    name: trailhead_bedrock_data

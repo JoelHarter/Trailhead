@@ -1,0 +1,27 @@
+{
+  "format_version": "1.13.0",
+  "minecraft:scatter_feature": {
+    "description": {
+      "identifier": "ns:lily_of_the_valley_patch"
+    },
+    "places_feature": "ns:lily_of_the_valley_block",
+    "project_input_to_floor": true,
+    "iterations": 6,
+    "coordinate_eval_order": "xzy",
+    "x": {
+      "distribution": "gaussian",
+      "extent": [
+        -7,
+        7
+      ]
+    },
+    "z": {
+      "distribution": "gaussian",
+      "extent": [
+        -7,
+        7
+      ]
+    },
+    "y": 0
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "format_version": "1.21.100",
+  "minecraft:item": {
+    "description": {
+      "identifier": "ns:sequoia_planks",
+      "menu_category": {
+        "category": "construction",
+        "group": "minecraft:itemGroup.name.planks"
+      }
+    },
+    "components": {
+      "minecraft:block_placer": {
+        "block": "ns:sequoia_planks",
+        "replace_block_item": true
+      },
+      "minecraft:tags": {
+        "tags": [
+          "minecraft:planks"
+        ]
+      },
+      "minecraft:fuel": {
+        "duration": 15
+      }
+    }
+  }
+}

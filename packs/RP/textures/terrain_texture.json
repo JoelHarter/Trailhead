@@ -1,0 +1,29 @@
+{
+  "resource_pack_name": "trailhead",
+  "texture_name": "atlas.terrain",
+  "padding": 8,
+  "num_mip_levels": 4,
+  "texture_data": {
+    "sequoia_planks": {
+      "textures": "textures/blocks/sequoia_planks"
+    },
+    "sequoia_log": {
+      "textures": "textures/blocks/sequoia_log"
+    },
+    "sequoia_log_top": {
+      "textures": "textures/blocks/sequoia_log_top"
+    },
+    "sequoia_leaves": {
+      "textures": "textures/blocks/sequoia_leaves"
+    },
+    "stripped_sequoia_log": {
+      "textures": "textures/blocks/stripped_sequoia_log"
+    },
+    "stripped_sequoia_log_top": {
+      "textures": "textures/blocks/stripped_sequoia_log_top"
+    },
+    "sequoia_sapling": {
+      "textures": "textures/blocks/sequoia_sapling"
+    }
+  }
+}

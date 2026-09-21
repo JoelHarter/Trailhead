@@ -1,0 +1,15 @@
+tile.ns:sequoia_planks.name=Sequoia Planks
+item.ns:sequoia_planks=Sequoia Planks
+tile.ns:sequoia_log.name=Sequoia Log
+item.ns:sequoia_log=Sequoia Log
+tile.ns:sequoia_wood.name=Sequoia Wood
+item.ns:sequoia_wood=Sequoia Wood
+tile.ns:stripped_sequoia_log.name=Stripped Sequoia Log
+item.ns:stripped_sequoia_log=Stripped Sequoia Log
+tile.ns:stripped_sequoia_wood.name=Stripped Sequoia Wood
+item.ns:stripped_sequoia_wood=Stripped Sequoia Wood
+tile.ns:sequoia_leaves.name=Sequoia Leaves
+item.ns:sequoia_leaves=Sequoia Leaves
+tile.ns:sequoia_sapling.name=Sequoia Sapling
+item.ns:sequoia_sapling=Sequoia Sapling
+biome.ns:sequoia_grove.name=Sequoia Grove

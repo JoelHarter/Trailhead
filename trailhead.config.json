@@ -1,0 +1,7 @@
+{
+  "namespace": "trailhead",
+  "levelName": "trailhead-dev",
+  "containerName": "trailhead-bedrock",
+  "behaviorPackFolder": "trailhead_bp",
+  "resourcePackFolder": "trailhead_rp"
+}
