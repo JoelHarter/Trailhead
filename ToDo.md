@@ -89,8 +89,11 @@ Each of these is Joel's call. The item itself is further down, under the heading
 - 🟨 🌶️ Joel's more interesting sapling. Today a sapling always grows the smallest tree. (Java: size
   from the age field at that spot, and the growth roll applied too, so about a 1% chance per attempt
   at an ancient spot)
-- 🟧 🌶️ Leaf rendering cost on the Switch: every inner face of every leaf is drawn today. Leaf loading
-  was visibly slow in the first play-test on the phone
+- 🟨 🍰 Leaf rendering on the Switch: leaves now use `alpha_test_to_opaque`, the render method Mojang
+  documents as "used for a block like the leaves" (see-through up close, plain opaque blocks at a
+  distance, which is what vanilla leaves do), plus randomized texture orientation. Check the frame
+  rate in a dense grove on the Switch; if it is still poor, the Fancy Leaves graphics setting is the
+  next thing to try
 - 🟦 🚲 Monsters spawning on limbs and in crowns (waiting on a decision)
 - 🟦 🌶️ Reiterated limbs on the oldest giants: a big limb's tip turning up into a small trunk of its own
 - 🟦 🌶️ "Mega sequoia" from four saplings: Java has an unused placeholder for it

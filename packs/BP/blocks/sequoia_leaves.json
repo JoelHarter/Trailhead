@@ -15,7 +15,8 @@
       "minecraft:material_instances": {
         "*": {
           "texture": "sequoia_leaves",
-          "render_method": "alpha_test"
+          "render_method": "alpha_test_to_opaque",
+          "isotropic": true
         }
       },
       "minecraft:light_dampening": 1,
