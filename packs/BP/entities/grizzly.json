@@ -1,0 +1,1577 @@
+{
+  "format_version": "1.26.50",
+  "minecraft:entity": {
+    "description": {
+      "identifier": "ns:grizzly",
+      "spawn_category": "creature",
+      "is_spawnable": true,
+      "is_summonable": true,
+      "properties": {
+        "ns:standing": {
+          "type": "bool",
+          "default": false,
+          "client_sync": true
+        }
+      }
+    },
+    "component_groups": {
+      "ns:baby": {
+        "minecraft:is_baby": {},
+        "minecraft:scale": {
+          "value": 0.5
+        },
+        "minecraft:ageable": {
+          "duration": 1200,
+          "feed_items": [
+            "cod",
+            "salmon",
+            "tropical_fish",
+            "pufferfish"
+          ],
+          "grow_up": {
+            "event": "minecraft:ageable_grow_up",
+            "target": "self"
+          }
+        },
+        "minecraft:behavior.follow_parent": {
+          "priority": 4,
+          "speed_multiplier": 1.25
+        },
+        "minecraft:behavior.panic": {
+          "priority": 1,
+          "speed_multiplier": 1.25
+        }
+      },
+      "ns:adult": {
+        "minecraft:experience_reward": {
+          "on_bred": "Math.Random(1,7)",
+          "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
+        },
+        "minecraft:leashable_to": {
+          "unleash_on_removal": false
+        },
+        "minecraft:breedable": {
+          "require_tame": true,
+          "require_full_health": true,
+          "breeds_with": {
+            "ns:grizzly": {}
+          },
+          "breed_items": [
+            "honey_bottle",
+            "honeycomb"
+          ]
+        }
+      },
+      "ns:wild": {
+        "minecraft:tameable": {
+          "probability": 0.33,
+          "tame_items": [
+            "honey_bottle",
+            "honeycomb",
+            "sweet_berries",
+            "glow_berries"
+          ],
+          "tame_event": {
+            "event": "minecraft:on_tame",
+            "target": "self"
+          }
+        },
+        "minecraft:entity_sensor": {
+          "find_players_only": false,
+          "subsensors": [
+            {
+              "range": [
+                2,
+                2
+              ],
+              "minimum_count": 1,
+              "event_filters": {
+                "any_of": [
+                  {
+                    "all_of": [
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "player"
+                      },
+                      {
+                        "none_of": [
+                          {
+                            "any_of": [
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "honey_bottle"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "honeycomb"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "sweet_berries"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "glow_berries"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "cod"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "salmon"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "tropical_fish"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "pufferfish"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "apple"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "bread"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "cooked_beef"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "cooked_porkchop"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "cooked_chicken"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "cooked_salmon"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "cooked_cod"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "carrot"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "potato"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "baked_potato"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "melon_slice"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "cookie"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "golden_apple"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "beef"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "porkchop"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "chicken"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "mutton"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "cooked_mutton"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "rabbit"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "cooked_rabbit"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "beetroot"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "pumpkin_pie"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "dried_kelp"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "any_of": [
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "cow"
+                      },
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "mooshroom"
+                      },
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "horse"
+                      },
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "donkey"
+                      },
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "mule"
+                      },
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "camel"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "event": "trailhead:intruder_close"
+            },
+            {
+              "range": [
+                6,
+                4
+              ],
+              "minimum_count": 1,
+              "event_filters": {
+                "any_of": [
+                  {
+                    "all_of": [
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "player"
+                      },
+                      {
+                        "none_of": [
+                          {
+                            "any_of": [
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "honey_bottle"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "honeycomb"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "sweet_berries"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "glow_berries"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "cod"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "salmon"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "tropical_fish"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "pufferfish"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "apple"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "bread"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "cooked_beef"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "cooked_porkchop"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "cooked_chicken"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "cooked_salmon"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "cooked_cod"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "carrot"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "potato"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "baked_potato"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "melon_slice"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "cookie"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "golden_apple"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "beef"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "porkchop"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "chicken"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "mutton"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "cooked_mutton"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "rabbit"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "cooked_rabbit"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "beetroot"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "pumpkin_pie"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "dried_kelp"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "any_of": [
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "cow"
+                      },
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "mooshroom"
+                      },
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "horse"
+                      },
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "donkey"
+                      },
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "mule"
+                      },
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "camel"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "event": "trailhead:intruder_near"
+            },
+            {
+              "range": [
+                6,
+                4
+              ],
+              "maximum_count": 0,
+              "event_filters": {
+                "any_of": [
+                  {
+                    "all_of": [
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "player"
+                      },
+                      {
+                        "none_of": [
+                          {
+                            "any_of": [
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "honey_bottle"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "honeycomb"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "sweet_berries"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "glow_berries"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "cod"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "salmon"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "tropical_fish"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "pufferfish"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "apple"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "bread"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "cooked_beef"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "cooked_porkchop"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "cooked_chicken"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "cooked_salmon"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "cooked_cod"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "carrot"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "potato"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "baked_potato"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "melon_slice"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "cookie"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "golden_apple"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "beef"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "porkchop"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "chicken"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "mutton"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "cooked_mutton"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "rabbit"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "cooked_rabbit"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "beetroot"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "pumpkin_pie"
+                              },
+                              {
+                                "test": "has_equipment",
+                                "subject": "other",
+                                "domain": "hand",
+                                "value": "dried_kelp"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "any_of": [
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "cow"
+                      },
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "mooshroom"
+                      },
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "horse"
+                      },
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "donkey"
+                      },
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "mule"
+                      },
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "camel"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "event": "trailhead:intruders_gone"
+            },
+            {
+              "range": [
+                18,
+                8
+              ],
+              "minimum_count": 1,
+              "event_filters": {
+                "all_of": [
+                  {
+                    "test": "is_family",
+                    "subject": "other",
+                    "value": "grizzly"
+                  },
+                  {
+                    "test": "is_baby",
+                    "subject": "other",
+                    "value": true
+                  }
+                ]
+              },
+              "event": "trailhead:cub_nearby"
+            }
+          ]
+        },
+        "minecraft:on_target_acquired": {
+          "event": "trailhead:on_anger",
+          "target": "self"
+        },
+        "minecraft:on_friendly_anger": {
+          "event": "trailhead:on_anger",
+          "target": "self"
+        },
+        "minecraft:behavior.nearest_attackable_target": {
+          "priority": 4,
+          "must_see": true,
+          "reselect_targets": true,
+          "entity_types": [
+            {
+              "filters": {
+                "any_of": [
+                  {
+                    "test": "is_family",
+                    "subject": "other",
+                    "value": "rabbit"
+                  },
+                  {
+                    "test": "is_family",
+                    "subject": "other",
+                    "value": "sheep"
+                  },
+                  {
+                    "test": "is_family",
+                    "subject": "other",
+                    "value": "pig"
+                  },
+                  {
+                    "test": "is_family",
+                    "subject": "other",
+                    "value": "goat"
+                  },
+                  {
+                    "test": "is_family",
+                    "subject": "other",
+                    "value": "llama"
+                  },
+                  {
+                    "test": "is_family",
+                    "subject": "other",
+                    "value": "chicken"
+                  },
+                  {
+                    "test": "is_family",
+                    "subject": "other",
+                    "value": "fox"
+                  }
+                ]
+              },
+              "max_dist": 16
+            },
+            {
+              "filters": {
+                "all_of": [
+                  {
+                    "any_of": [
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "fish"
+                      }
+                    ]
+                  },
+                  {
+                    "test": "in_water",
+                    "subject": "other",
+                    "operator": "!=",
+                    "value": true
+                  }
+                ]
+              },
+              "max_dist": 10
+            }
+          ]
+        },
+        "minecraft:behavior.raid_garden": {
+          "priority": 5,
+          "blocks": [
+            "minecraft:sweet_berry_bush"
+          ],
+          "speed_multiplier": 1.2,
+          "search_range": 16,
+          "search_height": 6,
+          "goal_radius": 1.5,
+          "max_to_eat": 3,
+          "initial_eat_delay": 2
+        },
+        "minecraft:behavior.tempt": {
+          "priority": 3,
+          "speed_multiplier": 1.1,
+          "items": [
+            "cod",
+            "salmon",
+            "tropical_fish",
+            "pufferfish"
+          ],
+          "can_get_scared": false
+        }
+      },
+      "ns:protective": {
+        "minecraft:entity_sensor": {
+          "find_players_only": false,
+          "subsensors": [
+            {
+              "range": [
+                2,
+                2
+              ],
+              "minimum_count": 1,
+              "event_filters": {
+                "any_of": [
+                  {
+                    "test": "is_family",
+                    "subject": "other",
+                    "value": "player"
+                  },
+                  {
+                    "any_of": [
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "cow"
+                      },
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "mooshroom"
+                      },
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "horse"
+                      },
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "donkey"
+                      },
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "mule"
+                      },
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "camel"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "event": "trailhead:intruder_close"
+            },
+            {
+              "range": [
+                6,
+                4
+              ],
+              "minimum_count": 1,
+              "event_filters": {
+                "any_of": [
+                  {
+                    "test": "is_family",
+                    "subject": "other",
+                    "value": "player"
+                  },
+                  {
+                    "any_of": [
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "cow"
+                      },
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "mooshroom"
+                      },
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "horse"
+                      },
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "donkey"
+                      },
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "mule"
+                      },
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "camel"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "event": "trailhead:intruder_near"
+            },
+            {
+              "range": [
+                6,
+                4
+              ],
+              "maximum_count": 0,
+              "event_filters": {
+                "any_of": [
+                  {
+                    "test": "is_family",
+                    "subject": "other",
+                    "value": "player"
+                  },
+                  {
+                    "any_of": [
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "cow"
+                      },
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "mooshroom"
+                      },
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "horse"
+                      },
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "donkey"
+                      },
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "mule"
+                      },
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "camel"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "event": "trailhead:intruders_gone"
+            },
+            {
+              "range": [
+                18,
+                8
+              ],
+              "maximum_count": 0,
+              "event_filters": {
+                "all_of": [
+                  {
+                    "test": "is_family",
+                    "subject": "other",
+                    "value": "grizzly"
+                  },
+                  {
+                    "test": "is_baby",
+                    "subject": "other",
+                    "value": true
+                  }
+                ]
+              },
+              "event": "trailhead:cub_gone"
+            }
+          ]
+        }
+      },
+      "ns:warning": {
+        "minecraft:movement": {
+          "value": 0.0
+        },
+        "minecraft:behavior.look_at_player": {
+          "priority": 0,
+          "look_distance": 7.0,
+          "probability": 1.0,
+          "angle_of_view_horizontal": 360
+        }
+      },
+      "ns:hostile": {
+        "minecraft:attack": {
+          "damage": 6.0
+        },
+        "minecraft:angry": {
+          "duration": 500,
+          "broadcast_anger": false,
+          "broadcast_range": 20,
+          "calm_event": {
+            "event": "trailhead:on_calm",
+            "target": "self"
+          }
+        },
+        "minecraft:behavior.nearest_attackable_target": {
+          "priority": 1,
+          "must_see": false,
+          "reselect_targets": true,
+          "entity_types": [
+            {
+              "filters": {
+                "any_of": [
+                  {
+                    "test": "is_family",
+                    "subject": "other",
+                    "value": "player"
+                  },
+                  {
+                    "any_of": [
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "cow"
+                      },
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "mooshroom"
+                      },
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "horse"
+                      },
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "donkey"
+                      },
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "mule"
+                      },
+                      {
+                        "test": "is_family",
+                        "subject": "other",
+                        "value": "camel"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "max_dist": 16
+            }
+          ]
+        },
+        "minecraft:behavior.stomp_attack": {
+          "priority": 1,
+          "track_target": true,
+          "require_complete_path": true,
+          "stomp_range_multiplier": 2.0,
+          "no_damage_range_multiplier": 2.0
+        }
+      },
+      "ns:tamed": {
+        "minecraft:is_tamed": {},
+        "minecraft:attack": {
+          "damage": 6.0
+        },
+        "minecraft:sittable": {},
+        "minecraft:is_dyeable": {
+          "interact_text": "action.interact.dye"
+        },
+        "minecraft:behavior.teleport_to_owner": {
+          "priority": 1,
+          "filters": {
+            "test": "owner_distance",
+            "operator": ">",
+            "value": 12
+          }
+        },
+        "minecraft:behavior.owner_hurt_by_target": {
+          "priority": 1
+        },
+        "minecraft:behavior.owner_hurt_target": {
+          "priority": 2
+        },
+        "minecraft:behavior.melee_box_attack": {
+          "priority": 3,
+          "track_target": true
+        },
+        "minecraft:behavior.follow_owner": {
+          "priority": 6,
+          "speed_multiplier": 1.25,
+          "start_distance": 4,
+          "stop_distance": 2,
+          "post_teleport_distance": -1
+        },
+        "minecraft:behavior.tempt": {
+          "priority": 3,
+          "speed_multiplier": 1.1,
+          "items": [
+            "cod",
+            "salmon",
+            "tropical_fish",
+            "pufferfish"
+          ],
+          "can_get_scared": false
+        }
+      },
+      "ns:collar_default": {
+        "minecraft:color": {
+          "value": 14
+        }
+      }
+    },
+    "components": {
+      "minecraft:type_family": {
+        "family": [
+          "grizzly",
+          "bear",
+          "mob"
+        ]
+      },
+      "minecraft:is_hidden_when_invisible": {},
+      "minecraft:nameable": {},
+      "minecraft:offspring": {
+        "offspring_pairs": {
+          "ns:grizzly": "ns:grizzly"
+        }
+      },
+      "minecraft:spawn_egg_interaction": {},
+      "minecraft:breathable": {
+        "total_supply": 15,
+        "suffocate_time": 0
+      },
+      "minecraft:health": {
+        "value": 30,
+        "max": 30
+      },
+      "minecraft:hurt_on_condition": {
+        "damage_conditions": [
+          {
+            "filters": {
+              "test": "in_lava",
+              "subject": "self",
+              "operator": "==",
+              "value": true
+            },
+            "cause": "lava",
+            "damage_per_tick": 4
+          }
+        ]
+      },
+      "minecraft:damage_sensor": {
+        "triggers": [
+          {
+            "cause": "contact",
+            "deals_damage": "no"
+          }
+        ]
+      },
+      "minecraft:collision_box": {
+        "width": 1.4,
+        "height": 1.4
+      },
+      "minecraft:movement": {
+        "value": 0.25
+      },
+      "minecraft:water_movement": {
+        "drag_factor": 0.98
+      },
+      "minecraft:navigation.walk": {
+        "can_path_over_water": true,
+        "avoid_damage_blocks": true,
+        "using_door_annotation": true
+      },
+      "minecraft:movement.basic": {},
+      "minecraft:jump.static": {},
+      "minecraft:follow_range": {
+        "value": 48
+      },
+      "minecraft:healable": {
+        "items": [
+          {
+            "item": "cod",
+            "heal_amount": 4
+          },
+          {
+            "item": "salmon",
+            "heal_amount": 4
+          },
+          {
+            "item": "tropical_fish",
+            "heal_amount": 4
+          },
+          {
+            "item": "pufferfish",
+            "heal_amount": 4
+          }
+        ]
+      },
+      "minecraft:despawn": {
+        "despawn_from_distance": {}
+      },
+      "minecraft:ambient_sound_interval": {
+        "event_name": "ambient",
+        "event_names": [
+          {
+            "condition": "query.is_baby",
+            "event_name": "ambient.baby"
+          }
+        ],
+        "range": 16.0,
+        "value": 6.0
+      },
+      "minecraft:behavior.float": {
+        "priority": 0
+      },
+      "minecraft:behavior.panic": {
+        "priority": 1,
+        "speed_multiplier": 1.25,
+        "damage_sources": [
+          "campfire",
+          "fire",
+          "fire_tick",
+          "freezing",
+          "lightning",
+          "lava",
+          "magma",
+          "temperature",
+          "soul_campfire"
+        ],
+        "ignore_mob_damage": true
+      },
+      "minecraft:behavior.stay_while_sitting": {
+        "priority": 1
+      },
+      "minecraft:behavior.hurt_by_target": {
+        "priority": 2
+      },
+      "minecraft:behavior.breed": {
+        "priority": 2,
+        "speed_multiplier": 1.0
+      },
+      "minecraft:behavior.random_stroll": {
+        "priority": 7
+      },
+      "minecraft:behavior.look_at_player": {
+        "priority": 8,
+        "look_distance": 6.0,
+        "probability": 0.02
+      },
+      "minecraft:behavior.random_look_around": {
+        "priority": 9
+      },
+      "minecraft:physics": {},
+      "minecraft:pushable_by_entity": {},
+      "minecraft:pushable_by_block": {},
+      "minecraft:leashable": {
+        "unleash_on_removal": false
+      },
+      "minecraft:balloonable": {},
+      "minecraft:conditional_bandwidth_optimization": {},
+      "minecraft:uses_legacy_friction": {}
+    },
+    "events": {
+      "minecraft:entity_spawned": {
+        "add": {
+          "component_groups": [
+            "ns:adult",
+            "ns:wild"
+          ]
+        }
+      },
+      "minecraft:entity_born": {
+        "sequence": [
+          {
+            "add": {
+              "component_groups": [
+                "ns:baby"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "is_tamed"
+            },
+            "add": {
+              "component_groups": [
+                "ns:tamed",
+                "ns:collar_default"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "is_tamed",
+              "value": false
+            },
+            "add": {
+              "component_groups": [
+                "ns:wild"
+              ]
+            }
+          }
+        ]
+      },
+      "minecraft:ageable_grow_up": {
+        "remove": {
+          "component_groups": [
+            "ns:baby"
+          ]
+        },
+        "add": {
+          "component_groups": [
+            "ns:adult"
+          ]
+        }
+      },
+      "minecraft:on_tame": {
+        "remove": {
+          "component_groups": [
+            "ns:wild",
+            "ns:protective",
+            "ns:warning",
+            "ns:hostile"
+          ]
+        },
+        "add": {
+          "component_groups": [
+            "ns:tamed",
+            "ns:collar_default"
+          ]
+        },
+        "set_property": {
+          "ns:standing": false
+        }
+      },
+      "trailhead:intruder_near": {
+        "filters": {
+          "test": "has_component",
+          "operator": "!=",
+          "value": "minecraft:angry"
+        },
+        "add": {
+          "component_groups": [
+            "ns:warning"
+          ]
+        },
+        "set_property": {
+          "ns:standing": true
+        }
+      },
+      "trailhead:intruders_gone": {
+        "remove": {
+          "component_groups": [
+            "ns:warning"
+          ]
+        },
+        "set_property": {
+          "ns:standing": false
+        }
+      },
+      "trailhead:intruder_close": {
+        "remove": {
+          "component_groups": [
+            "ns:warning"
+          ]
+        },
+        "set_property": {
+          "ns:standing": false
+        },
+        "trigger": "trailhead:on_anger"
+      },
+      "trailhead:on_anger": {
+        "remove": {
+          "component_groups": [
+            "ns:warning"
+          ]
+        },
+        "add": {
+          "component_groups": [
+            "ns:hostile"
+          ]
+        },
+        "set_property": {
+          "ns:standing": false
+        }
+      },
+      "trailhead:on_calm": {
+        "remove": {
+          "component_groups": [
+            "ns:hostile"
+          ]
+        }
+      },
+      "trailhead:cub_nearby": {
+        "add": {
+          "component_groups": [
+            "ns:protective"
+          ]
+        }
+      },
+      "trailhead:cub_gone": {
+        "remove": {
+          "component_groups": [
+            "ns:protective"
+          ]
+        },
+        "add": {
+          "component_groups": [
+            "ns:wild"
+          ]
+        }
+      }
+    }
+  }
+}

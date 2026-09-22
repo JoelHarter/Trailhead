@@ -99,3 +99,54 @@ system.afterEvents.scriptEventReceive.subscribe((event) => {
     }, 20 * 25);
   };
 });
+
+// Entity checks, run by the same script event: spawn a grizzly, then drive its events and read back the results.
+system.afterEvents.scriptEventReceive.subscribe((event) => {
+  if (event.id !== `${NAMESPACE}:test_entities`) return;
+  const overworld = world.getDimension("overworld");
+  const report = (name: string, ok: boolean, detail = "") => console.warn(`[test] ${ok ? "PASS" : "FAIL"}  ${name}${detail ? "  (" + detail + ")" : ""}`);
+  const X = 3000, Z = 3000;
+  overworld.runCommand(`tickingarea remove ${AREA}`);
+  overworld.runCommand(`tickingarea add circle ${X} 64 ${Z} 2 ${AREA}`);
+  let waited = 0;
+  const poll = system.runInterval(() => {
+    let ready = false;
+    try {
+      ready = overworld.getBlock({ x: X, y: 100, z: Z }) !== undefined;
+    } catch {
+      ready = false;
+    }
+    if (!ready && ++waited < 90) return;
+    system.clearRun(poll);
+    if (!ready) return console.warn("[test] FAIL  entity test area never loaded");
+    const top = overworld.getTopmostBlock({ x: X, z: Z });
+    if (!top) return console.warn("[test] FAIL  no ground at the entity test area");
+    const at = { x: X + 0.5, y: top.y + 1, z: Z + 0.5 };
+    try {
+      const bear = overworld.spawnEntity(id("grizzly") as never, at);
+      report("a grizzly bear spawns", bear.isValid, bear.typeId);
+      report("it is in the grizzly and bear families", bear.getComponent("type_family")?.hasTypeFamily("grizzly") === true && bear.getComponent("type_family")?.hasTypeFamily("bear") === true);
+      report("it has 30 health", bear.getComponent("health")?.currentValue === 30, String(bear.getComponent("health")?.currentValue));
+      report("an adult spawns untamed and not a cub", !bear.getComponent("is_baby") && !bear.getComponent("is_tamed"));
+      bear.triggerEvent("trailhead:intruder_near");
+      system.runTimeout(() => {
+        report("the warning event makes it rear up (standing property)", bear.getProperty(id("standing")) === true);
+        bear.triggerEvent("trailhead:intruders_gone");
+        bear.triggerEvent("minecraft:on_tame");
+        system.runTimeout(() => {
+          report("after taming it is tamed, sittable, and dyeable", !!bear.getComponent("is_tamed") && !!bear.getComponent("minecraft:is_dyeable"), `color ${bear.getComponent("color")?.value}`);
+          const cub = overworld.spawnEntity(id("grizzly") as never, at, { spawnEvent: "minecraft:entity_born" } as never);
+          system.runTimeout(() => {
+            report("entity_born gives a cub", !!cub.getComponent("is_baby"));
+            bear.remove();
+            cub.remove();
+            overworld.runCommand(`tickingarea remove ${AREA}`);
+            console.warn("[test] done");
+          }, 10);
+        }, 10);
+      }, 10);
+    } catch (error) {
+      report("entity test threw", false, String(error));
+    }
+  }, 20);
+});

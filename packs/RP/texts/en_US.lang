@@ -13,3 +13,5 @@ item.ns:sequoia_leaves=Sequoia Leaves
 tile.ns:sequoia_sapling.name=Sequoia Sapling
 item.ns:sequoia_sapling=Sequoia Sapling
 biome.ns:sequoia_grove.name=Sequoia Grove
+entity.ns:grizzly.name=Grizzly
+item.spawn_egg.entity.ns:grizzly.name=Spawn Grizzly

@@ -1,0 +1,32 @@
+{
+  "entity_sounds": {
+    "entities": {
+      "ns:grizzly": {
+        "volume": 1.0,
+        "pitch": [
+          0.8,
+          1.2
+        ],
+        "events": {
+          "ambient": "mob.polarbear.idle",
+          "ambient.baby": "mob.polarbear_baby.idle",
+          "death": "mob.polarbear.death",
+          "hurt": {
+            "sound": "mob.polarbear.hurt",
+            "volume": 0.7
+          },
+          "mob.warning": {
+            "sound": "mob.polarbear.warning",
+            "volume": 1.2,
+            "pitch": 1.0
+          },
+          "step": {
+            "sound": "mob.polarbear.step",
+            "volume": 0.7,
+            "pitch": 1.0
+          }
+        }
+      }
+    }
+  }
+}

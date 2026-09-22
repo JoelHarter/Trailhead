@@ -1,0 +1,27 @@
+{
+  "format_version": "1.8.0",
+  "render_controllers": {
+    "controller.render.ns.grizzly": {
+      "geometry": "Geometry.default",
+      "materials": [
+        {
+          "*": "Material.default"
+        }
+      ],
+      "textures": [
+        "Texture.default"
+      ]
+    },
+    "controller.render.ns.grizzly_collar": {
+      "geometry": "Geometry.default",
+      "materials": [
+        {
+          "*": "Material.collar"
+        }
+      ],
+      "textures": [
+        "Texture.collar"
+      ]
+    }
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "animation.ns.grizzly.move": {
+      "loop": true,
+      "bones": {
+        "body": {
+          "position": [
+            0.0,
+            "-9 - 2 * v.stand - this",
+            0.0
+          ],
+          "rotation": [
+            "(-(v.stand) * 63) - this",
+            0.0,
+            0.0
+          ]
+        },
+        "leg0": {
+          "position": [
+            0.0,
+            "-1 * v.stand",
+            "6 * v.stand"
+          ],
+          "rotation": [
+            "v.stand * 63",
+            0.0,
+            0.0
+          ]
+        },
+        "leg1": {
+          "position": [
+            0.0,
+            "-1 * v.stand",
+            "6 * v.stand"
+          ],
+          "rotation": [
+            "v.stand * 63",
+            0.0,
+            0.0
+          ]
+        }
+      }
+    },
+    "animation.ns.grizzly.sit": {
+      "loop": true,
+      "bones": {
+        "body": {
+          "position": [
+            0.0,
+            "-7 * v.sit",
+            0.0
+          ],
+          "rotation": [
+            "-24 * v.sit",
+            0.0,
+            0.0
+          ]
+        },
+        "leg0": {
+          "position": [
+            0.0,
+            "4 * v.sit",
+            "-3 * v.sit"
+          ],
+          "rotation": [
+            "-66 * v.sit",
+            0.0,
+            0.0
+          ]
+        },
+        "leg1": {
+          "position": [
+            0.0,
+            "4 * v.sit",
+            "-3 * v.sit"
+          ],
+          "rotation": [
+            "-66 * v.sit",
+            0.0,
+            0.0
+          ]
+        },
+        "leg2": {
+          "position": [
+            0.0,
+            0.0,
+            "1 * v.sit"
+          ],
+          "rotation": [
+            "24 * v.sit",
+            0.0,
+            0.0
+          ]
+        },
+        "leg3": {
+          "position": [
+            0.0,
+            0.0,
+            "1 * v.sit"
+          ],
+          "rotation": [
+            "24 * v.sit",
+            0.0,
+            0.0
+          ]
+        },
+        "head": {
+          "rotation": [
+            "-10 * v.sit",
+            0.0,
+            0.0
+          ]
+        }
+      }
+    },
+    "animation.ns.grizzly.baby_transform": {
+      "loop": true,
+      "bones": {
+        "head": {
+          "position": [
+            0.0,
+            -1.0,
+            3.0
+          ],
+          "scale": 1.25
+        }
+      }
+    }
+  }
+}

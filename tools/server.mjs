@@ -61,6 +61,10 @@ switch (command) {
     console.log("Probe started; results appear in the server log in about 25 seconds (npm run server:logs).");
     break;
   }
+  case "test-entities":
+    docker(["exec", name, "send-command", `scriptevent ${config.namespace}:test_entities`]);
+    console.log("Entity tests started; results appear in the server log in about 30 seconds.");
+    break;
   case "test-blocks":
     // Headless block behavior checks: see src/scripts/dev/blockTests.ts.
     docker(["exec", name, "send-command", `scriptevent ${config.namespace}:test_blocks`]);

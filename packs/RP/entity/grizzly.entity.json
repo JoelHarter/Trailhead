@@ -1,0 +1,50 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "ns:grizzly",
+      "materials": {
+        "default": "polar_bear",
+        "collar": "entity_alphatest_change_color"
+      },
+      "textures": {
+        "default": "textures/entity/grizzly",
+        "baby": "textures/entity/grizzly",
+        "collar": "textures/entity/grizzly_collar"
+      },
+      "geometry": {
+        "default": "geometry.polarbear",
+        "baby": "geometry.polar_bear.baby"
+      },
+      "animations": {
+        "walk": "animation.quadruped.walk",
+        "move": "animation.ns.grizzly.move",
+        "sit": "animation.ns.grizzly.sit",
+        "look_at_target": "animation.common.look_at_target",
+        "baby_transform": "animation.ns.grizzly.baby_transform"
+      },
+      "scripts": {
+        "scale": "query.is_baby ? 2.0 : 1.2",
+        "pre_animation": [
+          "v.stand = math.lerp(v.stand, q.property('ns:standing') ? 1.0 : 0.0, 0.15);",
+          "v.sit = math.lerp(v.sit, q.is_sitting ? 1.0 : 0.0, 0.2);"
+        ]
+      },
+      "animation_controllers": [
+        {
+          "move": "controller.animation.ns.grizzly.move"
+        }
+      ],
+      "render_controllers": [
+        "controller.render.ns.grizzly",
+        {
+          "controller.render.ns.grizzly_collar": "query.is_tamed"
+        }
+      ],
+      "spawn_egg": {
+        "base_color": "#5C4033",
+        "overlay_color": "#352315"
+      }
+    }
+  }
+}

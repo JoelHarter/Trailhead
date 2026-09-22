@@ -16,7 +16,7 @@
 
 - **One add-on** (one behavior pack + one resource pack) for all of Trailhead, not a pack per biome.
   One thing to install and update, and shared content has an obvious home.
-- **One namespace, `trailhead:`**, for everything: `trailhead:sequoia_log`, `trailhead:grizzly_bear`,
+- **One namespace, `trailhead:`**, for everything: `trailhead:sequoia_log`, `trailhead:grizzly`,
   `trailhead:sequoia_grove`.
 - **The namespace is the one part of the name that becomes permanent.** The folder and display name can
   change at any time, but every block and mob is saved into a world under its namespaced ID, so

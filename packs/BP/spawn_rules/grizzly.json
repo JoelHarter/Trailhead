@@ -1,0 +1,133 @@
+{
+  "format_version": "1.8.0",
+  "minecraft:spawn_rules": {
+    "description": {
+      "identifier": "ns:grizzly",
+      "population_control": "animal"
+    },
+    "conditions": [
+      {
+        "minecraft:spawns_on_surface": {},
+        "minecraft:spawns_on_block_filter": [
+          "minecraft:grass_block",
+          "minecraft:podzol",
+          "minecraft:dirt",
+          "minecraft:coarse_dirt",
+          "minecraft:moss_block"
+        ],
+        "minecraft:brightness_filter": {
+          "min": 7,
+          "max": 15,
+          "adjust_for_weather": false
+        },
+        "minecraft:weight": {
+          "default": 15
+        },
+        "minecraft:herd": {
+          "min_size": 1,
+          "max_size": 1
+        },
+        "minecraft:biome_filter": [
+          {
+            "test": "has_biome_tag",
+            "operator": "==",
+            "value": "ns_grizzly_habitat"
+          }
+        ]
+      },
+      {
+        "minecraft:spawns_on_surface": {},
+        "minecraft:spawns_on_block_filter": [
+          "minecraft:grass_block",
+          "minecraft:podzol",
+          "minecraft:dirt",
+          "minecraft:coarse_dirt",
+          "minecraft:moss_block"
+        ],
+        "minecraft:brightness_filter": {
+          "min": 7,
+          "max": 15,
+          "adjust_for_weather": false
+        },
+        "minecraft:weight": {
+          "default": 2
+        },
+        "minecraft:herd": {
+          "min_size": 2,
+          "max_size": 2,
+          "event": "minecraft:entity_born",
+          "event_skip_count": 1
+        },
+        "minecraft:biome_filter": [
+          {
+            "test": "has_biome_tag",
+            "operator": "==",
+            "value": "ns_grizzly_habitat"
+          }
+        ]
+      },
+      {
+        "minecraft:spawns_on_surface": {},
+        "minecraft:spawns_on_block_filter": [
+          "minecraft:grass_block",
+          "minecraft:podzol",
+          "minecraft:dirt",
+          "minecraft:coarse_dirt",
+          "minecraft:moss_block"
+        ],
+        "minecraft:brightness_filter": {
+          "min": 7,
+          "max": 15,
+          "adjust_for_weather": false
+        },
+        "minecraft:weight": {
+          "default": 2
+        },
+        "minecraft:herd": {
+          "min_size": 3,
+          "max_size": 3,
+          "event": "minecraft:entity_born",
+          "event_skip_count": 1
+        },
+        "minecraft:biome_filter": [
+          {
+            "test": "has_biome_tag",
+            "operator": "==",
+            "value": "ns_grizzly_habitat"
+          }
+        ]
+      },
+      {
+        "minecraft:spawns_on_surface": {},
+        "minecraft:spawns_on_block_filter": [
+          "minecraft:grass_block",
+          "minecraft:podzol",
+          "minecraft:dirt",
+          "minecraft:coarse_dirt",
+          "minecraft:moss_block"
+        ],
+        "minecraft:brightness_filter": {
+          "min": 7,
+          "max": 15,
+          "adjust_for_weather": false
+        },
+        "minecraft:weight": {
+          "default": 1
+        },
+        "minecraft:herd": {
+          "min_size": 4,
+          "max_size": 4,
+          "event": "minecraft:entity_born",
+          "event_skip_count": 1
+        },
+        "minecraft:biome_filter": [
+          {
+            "test": "has_biome_tag",
+            "operator": "==",
+            "value": "ns_grizzly_habitat"
+          }
+        ]
+      }
+    ]
+  }
+}

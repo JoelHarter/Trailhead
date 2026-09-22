@@ -39,11 +39,11 @@ Each of these is Joel's call. The item itself is further down, under the heading
 |---|---|---|
 | mossy boulders in the grove | gone with the `mega` tag; Java had none; real Sierra groves do sit among granite | Grove biome |
 | monsters on the big limbs | skeletons spawn in the crowns (today); bug or feature | Trees |
-| what a grizzly drops | *Java: nothing, by omission* | Grizzly bear |
+| what a grizzly drops | *Java: nothing, by omission* | Grizzly |
 | where eagles spawn | *Java's docs say the canopy; its code spawns them on the ground* | Eagle |
 | eagles and cats | cats are prey, and also scare eagles off, a rule inherited from the phantom | Eagle |
-| bears and the mob griefing rule | Java's raiding ignores it | Grizzly bear |
-| where bears spawn | *in Java only young forest, since old forest has no grass: probably an accident* | Grizzly bear |
+| bears and the mob griefing rule | Java's raiding ignores it | Grizzly |
+| where bears spawn | Java only young forest by accident; ours spawn on grass, podzol, dirt, coarse dirt, moss, so anywhere in the grove | Grizzly |
 | wood sounds | generic wood (today), or acacia as Java used | Blocks and items |
 | grove size and rarity | replaces half the taiga family (today, generous for development) | Grove biome |
 | whose Realm hosts the family world | Joel's own (recommended), or a family member's | Project |
@@ -125,60 +125,31 @@ Each of these is Joel's call. The item itself is further down, under the heading
 - 🟨 🍰 Hands-on check on the phone of what the headless tests cannot reach: stripping with an axe,
   crafting planks and then a crafting table, shears on leaves, bone meal on a sapling
 
-## Grizzly bear
+## Grizzly
 
-Java builds it on the polar bear: same model with the grizzly texture, health 30, speed 0.25, attack 6,
-follow range 20, polar bear sounds, half-size cubs that follow a parent and flee danger. Hitbox
-1.4 × 1.4. Spawn egg `#5C4033` / `#352315`. Spawns through the `trailhead_grizzly_habitat` biome tag,
-which the grove already carries (Java: weight 10, alone).
+Built on the vanilla polar bear (its geometry, animations, attributes, and sounds) with the wolf's taming
+components. Entity `trailhead:grizzly`, display name "Grizzly". Spawns through the
+`trailhead_grizzly_habitat` biome tag. What is done is under Done; what remains:
 
-- 🟧 📦 Basics
-  - 🟧 🚲 Entity, model, texture, attributes, sounds, spawn egg, name
-  - 🟧 🍰 Natural spawning with cubs: 75% none, 8% one, 12% two, 5% three
-  - 🟨 🍰 Immune to sweet berry bush damage; swims, with legs at half speed in water
-  - 🟦 🍰 Drops (waiting on a decision)
-- 🟧 📦 Wild behavior
-  - 🟧 🌶️ Territorial warning: the closest intruder within 6 blocks makes the bear rear up, freeze, and
-    face it; within 2 it attacks. Intruders are players (creative included, spectators not) and cows,
-    mooshrooms, horses, donkeys, mules, camels. *Docs say any non-player entity. No warning sound plays
-    during the freeze. Cubs warn and attack too, probably unintended*
-  - 🟧 🚲 Pacifying: a player holding **any food** or honeycomb, in either hand, is ignored. *Docs say
-    "taming foods"*
-  - 🟧 🚲 Cub protection: near a cub (18 × 8 × 18), an untamed adult ignores pacifying items and targets
-    players. *The polar bear's shorter-range version is also still active, and applies to tamed bears too*
-  - 🟧 🍰 Hunting, untamed only: rabbit, sheep, pig, goat, llama, trader llama, chicken, fox; cod,
-    salmon, tropical fish, pufferfish only when out of water or in shallow water
-  - 🟨 🚲 Attacks: on land the polar bear's; in water a quick bite with a fox-bite sound and no rearing;
-    15-tick cooldown; angry when hurt
-  - 🟨 🍰 Tempted by raw fish, wild or tamed
-  - 🟦 💀 Climbs logs: rises 0.22 per tick when facing a log with headroom, body tilted back 65°; steers
-    into a neighboring trunk when its target or a hive is above it. *Applies to cubs and tamed bears,
-    with no check that it wants to climb.* No clean way on Bedrock; held back from the first release
-- 🟨 📦 Raiding, untamed only; walks to within 2.5 blocks; re-checks every 10–20 seconds
-  - 🟨 🌶️ Chests, trapped chests, barrels within 16 blocks that hold food: eats 1 item every half
-    second, 4 in all, with eating sounds; barrels visibly open and close. *The docs promise a chest
-    opening animation; the code only plays the open sound, every tick, and an interrupted bear leaves a
-    barrel open.* Bedrock scripts cannot animate a chest lid either
-  - 🟨 🚲 Beehives and nests within 24 blocks with any honey: empties it, drinking sound, **and every bee
-    within 12 blocks attacks the bear**. Hive undamaged. No campfire check
-  - 🟨 🍰 Sweet berry bushes with berries: eats them, the bush stays
-  - 🟨 🚲 Crops (wheat, carrots, potatoes, beetroot, torchflower) at any stage: **breaks the plant**,
-    leaving its drops. *Docs imply it eats without destroying*
-  - ⬜ 🍰 Small brown and red mushrooms: breaks them. *Not in the docs*
-  - 🟦 🚲 Glow berry harvesting: an unused import suggests it was planned
-- 🟧 📦 Taming and pet life
-  - 🟧 🚲 Taming with honey bottle (bottle returned), honeycomb, sweet berries, glow berries: 1 in 3 per
-    item; on success the bear sits. *Hearts and smoke are sent but never display. No check against
-    taming a cub or an angry bear*
-  - 🟧 🌶️ Sitting, toggled by the owner with an empty hand or any ordinary item. *In Java it is only a
-    flag: a "sitting" bear still wanders and fights, and has no pose.* Needs a real sit and a pose
-  - 🟧 🍰 Follows the owner beyond 4 blocks, teleports beside them beyond 12 (*no check the spot is
-    safe*); defends the owner and attacks what the owner attacks, not while sitting
-  - 🟧 🍰 Tamed bears never warn, hunt, or raid
-  - 🟨 🍰 Healing: raw fish heals 4; on a healthy cub it speeds growth by 10%. *Anyone can feed it*
-  - 🟨 🚲 Breeding: tamed bears only, with honey bottle or honeycomb. *Anyone can do it.* Cubs of a tamed
-    parent are born tamed, with its owner and collar color
-  - 🟨 🌶️ Collar: red by default, dyed by the owner; a tinted second layer (the texture exists)
+- 🟨 🍰 Hands-on check on the phone: the rear-up, the sitting pose, the collar layer and its dye tint
+  (the material `entity_alphatest_change_color` is an educated guess), spawn egg colors, sounds
+- 🟨 🚲 The polar bear's warning growl during the rear-up (Java played none; vanilla has
+  `mob.polarbear.warning`, mapped as `mob.warning` in our sounds, not yet triggered)
+- 🟨 🚲 Pacifying by "any food": Bedrock filters have no food category, so the sensor lists about 30
+  foods by name; extend the list if a food is missing
+- 🟨 🚲 Water bite: on land the polar bear's stomp attack; in water Java used a quick bite with a
+  fox-bite sound and no rearing. Not done: the bear attacks the same way in water
+- 🟨 🌶️ Raiding (untamed only): chests, trapped chests, barrels within 16 blocks that hold food (eats 4,
+  half a second apart; barrels open and close; chest lids cannot be animated on Bedrock); beehives and
+  nests within 24 blocks with honey (empties it, drinking sound, bees within 12 blocks attack); crops
+  and small mushrooms broken with drops. Needs `behavior.move_to_block` plus script for inventories
+  and hive state. Berry bushes are done (fox's `raid_garden`)
+- 🟦 🍰 Drops (waiting on a decision; today nothing)
+- 🟦 🍰 Whether cubs should warn and attack (in Java they do; here the sensors are on every wild bear,
+  cubs included, as in Java)
+- 🟦 🍰 Bears and the mob griefing rule (waiting on a decision)
+- 🟦 💀 Climbs logs (Java: rises 0.22 per tick when facing a log with headroom, body tilted back 65°).
+  No clean way on Bedrock; held back from the first release
 
 ## Eagle
 
@@ -227,6 +198,20 @@ Java builds it on the phantom: same model with the eagle texture, same circling 
 
 Kept for the record; the docs have the detail.
 
+- ✅ Grizzly, first release (2026-09-22): `trailhead:grizzly` on the polar bear's model, sounds,
+  health 30, speed 0.25, attack 6, with a 1.4 × 1.4 hitbox. Wild: territorial warning (an intruder
+  within 6 blocks makes it rear up on a smoothed property-driven animation and freeze facing them;
+  within 2 it attacks; intruders are players and cows, mooshrooms, horses, donkeys, mules, camels;
+  a player holding food is ignored, unless a cub is within 18 × 8 × 18); polar-bear anger and stomp
+  attack; hunts rabbit, sheep, pig, goat, llama, chicken, fox, and fish out of water; eats sweet
+  berries; tempted by raw fish; immune to berry bushes. Taming with honey bottle, honeycomb, sweet or
+  glow berries at 1 in 3; then sittable with a sitting pose, follows the owner beyond 4 blocks and
+  teleports beyond 12, defends the owner and attacks what the owner attacks, never warns, hunts, or
+  forages; dyeable red collar drawn as a tinted second layer; healed by raw fish (4); breeds with honey
+  when tamed; cubs of tamed parents are born tamed. Cubs are half size, follow a parent, panic, and grow
+  up in 20 minutes (fish speeds it). Natural spawns with Java's cub odds (75% none, 8% one, 12% two,
+  5% three). Spawn egg. Verified headlessly (`npm run test:entities`): spawn, families, health, the
+  warning property, taming, cubs
 - ✅ Age-driven grove (2026-09-22): soil by forest age (grass, coarse dirt, podzol at Java's thresholds),
   dandelions only in young forest, understory spruce thinning and skewing giant with age (10 attempts
   a chunk, Java's chances), all written by the baker against the same Molang age field. The vanilla

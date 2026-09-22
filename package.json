@@ -21,7 +21,8 @@
     "probe": "node tools/server.mjs probe",
     "vm:stop": "node tools/server.mjs vm-stop",
     "test:blocks": "node tools/server.mjs test-blocks",
-    "addon": "node tools/addon.mjs"
+    "addon": "node tools/addon.mjs",
+    "test:entities": "node tools/server.mjs test-entities"
   },
   "devDependencies": {
     "@minecraft/server": "2.10.0",
