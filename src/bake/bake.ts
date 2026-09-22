@@ -5,7 +5,8 @@
 // Everything written here is a build output (under build/BP); nothing is hand-edited.
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { MAX_TRUE_RADIUS, MIN_TRUE_RADIUS, growProbability } from "../core/fields/age.ts";
+import { type AgeParams, DEFAULT_AGE_PARAMS, MAX_TRUE_RADIUS, MIN_TRUE_RADIUS, growProbability } from "../core/fields/age.ts";
+import { sizeClassMolang } from "../core/fields/ageMolang.ts";
 import { Rng, seedFromPosition } from "../core/rng.ts";
 import { generateSequoia } from "../core/trees/sequoia.ts";
 import { StructureBuilder } from "./mcstructure.ts";
@@ -20,6 +21,8 @@ const FEATURE_FORMAT = "1.13.0";
 export interface BakeOptions {
   namespace: string;
   behaviorPackDir: string;
+  /** Shifts the forest age map, so each world shows a different part of it. */
+  worldOffset?: { x: number; z: number };
 }
 
 export interface BakedClass {
@@ -35,7 +38,7 @@ export function classRadiusRange(index: number): [min: number, max: number] {
   return [MIN_TRUE_RADIUS + step * index, MIN_TRUE_RADIUS + step * (index + 1)];
 }
 
-export function bakeSequoias({ namespace, behaviorPackDir }: BakeOptions): { classes: BakedClass[]; bytes: number } {
+export function bakeSequoias({ namespace, behaviorPackDir, worldOffset }: BakeOptions): { classes: BakedClass[]; bytes: number } {
   const structuresDir = join(behaviorPackDir, "structures", namespace, "sequoia");
   const featuresDir = join(behaviorPackDir, "features");
   mkdirSync(structuresDir, { recursive: true });
@@ -103,29 +106,71 @@ export function bakeSequoias({ namespace, behaviorPackDir }: BakeOptions): { cla
     classes.push({ index: c, minRadius, maxRadius, feature: `${namespace}:${classId}` });
   }
 
-  writeForestRule(namespace, behaviorPackDir, classes);
+  const age: AgeParams = { ...DEFAULT_AGE_PARAMS, offsetX: worldOffset?.x ?? 0, offsetZ: worldOffset?.z ?? 0 };
+  writeForestRule(namespace, behaviorPackDir, classes, age);
   return { classes, bytes };
 }
 
-/** Attempts per chunk in the Java mod; with the density law this sets how many trees a chunk gets. */
+/** Attempts per chunk, as in the Java mod; with the density law this sets how many trees a chunk gets. */
 const ATTEMPTS_PER_CHUNK = 32;
+/** Trees are not placed where the ground is at or below this height: sea level, which is also river level. */
+const WATER_LEVEL = 63;
 
 /**
- * INTERIM forest layout, until the age field is reworked and wired in: every chunk of a biome tagged
- * "<namespace>_has_giant_sequoias" gets a mix of all size classes, each as common as the density law
- * p = K / radius^1.5 makes it (many small trees, few giants), but with no spatial pattern: sizes are
- * shuffled together instead of forming groves of similar age.
+ * The forest: which size of tree grows where, decided by the age field during world generation.
+ *
+ * The Java mod made 32 attempts per chunk; each attempt read the age at its spot, which set the tree's
+ * size, and then grew with probability p = K / radius^1.5. This does the same thing, arranged to suit
+ * Bedrock, which has no "choose a feature by a condition": for each size class, the chunk makes as many
+ * attempts as that class would grow (32 x p), at random spots, and an attempt places a tree of that
+ * class only if the age field at its spot calls for that class. The field is evaluated about 40 times
+ * per chunk this way instead of 320.
  */
-function writeForestRule(namespace: string, behaviorPackDir: string, classes: BakedClass[]) {
-  const chance = classes.map((c) => growProbability((c.minRadius + c.maxRadius) / 2));
-  const treesPerChunk = (ATTEMPTS_PER_CHUNK * chance.reduce((a, b) => a + b, 0)) / classes.length;
-  const iterations = Math.ceil(treesPerChunk);
+function writeForestRule(namespace: string, behaviorPackDir: string, classes: BakedClass[], age: AgeParams) {
+  const featuresDir = join(behaviorPackDir, "features");
+  const classAt = sizeClassMolang(age, classes.length, "v.originx", "v.originz");
+  const attemptFeatures: string[] = [];
 
-  writeJson(join(behaviorPackDir, "features", "sequoia_any_size.json"), {
+  for (const c of classes) {
+    const id = `sequoia_class_${String(c.index).padStart(2, "0")}`;
+    const expected = ATTEMPTS_PER_CHUNK * growProbability((c.minRadius + c.maxRadius) / 2, age.kDensity);
+    const iterations = Math.ceil(expected);
+
+    // The gate: at the attempt's own spot, is this the class the field calls for, and is it dry land?
+    writeJson(join(featuresDir, `${id}_gate.json`), {
+      format_version: FEATURE_FORMAT,
+      "minecraft:scatter_feature": {
+        description: { identifier: `${namespace}:${id}_gate` },
+        places_feature: c.feature,
+        iterations: `(${classAt} == ${c.index} && q.heightmap(v.originx, v.originz) > ${WATER_LEVEL}) ? 1 : 0`,
+        coordinate_eval_order: "xzy",
+        x: 0,
+        z: 0,
+        y: `q.heightmap(v.originx, v.originz) - ${ROOT_DEPTH}`,
+      },
+    });
+    // The attempts: random spots in the chunk.
+    const attempts: Record<string, unknown> = {
+      description: { identifier: `${namespace}:${id}_attempts` },
+      places_feature: `${namespace}:${id}_gate`,
+      iterations,
+      coordinate_eval_order: "xzy",
+      x: { distribution: "uniform", extent: [0, 15] },
+      z: { distribution: "uniform", extent: [0, 15] },
+      y: 0,
+    };
+    const percent = Math.round((expected / iterations) * 100);
+    if (percent < 100) attempts.scatter_chance = { numerator: percent, denominator: 100 };
+    writeJson(join(featuresDir, `${id}_attempts.json`), { format_version: FEATURE_FORMAT, "minecraft:scatter_feature": attempts });
+    attemptFeatures.push(`${namespace}:${id}_attempts`);
+  }
+
+  writeJson(join(featuresDir, "sequoia_forest.json"), {
     format_version: FEATURE_FORMAT,
-    "minecraft:weighted_random_feature": {
-      description: { identifier: `${namespace}:sequoia_any_size` },
-      features: classes.map((c, i) => [c.feature, Math.max(1, Math.round(chance[i]! * 1000))]),
+    "minecraft:aggregate_feature": {
+      description: { identifier: `${namespace}:sequoia_forest` },
+      early_out: "none",
+      features: attemptFeatures,
     },
   });
 
@@ -134,19 +179,12 @@ function writeForestRule(namespace: string, behaviorPackDir: string, classes: Ba
   writeJson(join(rulesDir, "sequoia_forest.json"), {
     format_version: FEATURE_FORMAT,
     "minecraft:feature_rules": {
-      description: { identifier: `${namespace}:sequoia_forest`, places_feature: `${namespace}:sequoia_any_size` },
+      description: { identifier: `${namespace}:sequoia_forest`, places_feature: `${namespace}:sequoia_forest` },
       conditions: {
         placement_pass: "surface_pass",
         "minecraft:biome_filter": [{ test: "has_biome_tag", operator: "==", value: `${namespace}_has_giant_sequoias` }],
       },
-      distribution: {
-        iterations,
-        scatter_chance: { numerator: Math.round((treesPerChunk / iterations) * 100), denominator: 100 },
-        coordinate_eval_order: "xzy",
-        x: { distribution: "uniform", extent: [0, 15] },
-        z: { distribution: "uniform", extent: [0, 15] },
-        y: `q.heightmap(v.worldx, v.worldz) - ${ROOT_DEPTH}`,
-      },
+      distribution: { iterations: 1, coordinate_eval_order: "xzy", x: 0, z: 0, y: 0 },
     },
   });
 }

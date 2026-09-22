@@ -138,6 +138,21 @@ system.afterEvents.scriptEventReceive.subscribe((event) => {
     }
     for (const line of grain) console.warn(`[probe]   ${line}`);
 
+    // Per-chunk wood counts, for comparing against the field camera's map of the same area.
+    for (let cz = chunkZ0; cz <= chunkZ0 + 2 * RADIUS_CHUNKS; cz++) {
+      let line = "";
+      for (let cx = chunkX0; cx <= chunkX0 + 2 * RADIUS_CHUNKS; cx++) {
+        let n = -1;
+        try {
+          n = overworld.getBlocks(new BlockVolume({ x: cx * 16, y: -64, z: cz * 16 }, { x: cx * 16 + 15, y: 319, z: cz * 16 + 15 }), { includeTypes: [id("sequoia_log"), id("sequoia_wood")] }, false).getCapacity();
+        } catch {
+          // unloaded
+        }
+        line += ` ${n}`;
+      }
+      console.warn(`[probe] woodrow ${cz}${line}`);
+    }
+
     console.warn(`[probe] scanned ${chunksScanned} chunks: ${logs} logs, ${leaves} leaves, ${chunksWithLogs} chunks contain logs, highest log y=${highestLog}`);
     for (const sample of samples) console.warn(`[probe]   ${sample}`);
     overworld.runCommand(`tickingarea remove ${AREA_NAME}`);

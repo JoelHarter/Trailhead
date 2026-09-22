@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { ageAt, applySCurve, growProbability, trueRadiusAt } from "../src/core/fields/age.ts";
+import { DEFAULT_AGE_PARAMS, K_DENSITY, ageAt, applyContrast, growProbability } from "../src/core/fields/age.ts";
+import { sizeClassMolang } from "../src/core/fields/ageMolang.ts";
+import { noise2 } from "../src/core/fields/noise.ts";
 import { Rng } from "../src/core/rng.ts";
 import { DEFAULT_SEQUOIA_PARAMS, MAX_TRUE_RADIUS, generateSequoia, line6 } from "../src/core/trees/sequoia.ts";
 
@@ -120,19 +122,22 @@ test("line6 is face-connected and hits both ends", () => {
   }
 });
 
-test("age field stays in range and matches the Java formulas", () => {
-  for (let x = -2000; x <= 2000; x += 137) {
-    for (let z = -2000; z <= 2000; z += 149) {
+test("age field: in range, smooth, spread across all ages, and shifted by the world offset", () => {
+  const ages: number[] = [];
+  for (let x = -2000; x <= 2000; x += 37) {
+    for (let z = -2000; z <= 2000; z += 41) {
       const age = ageAt(x, z);
-      assert.ok(age >= 0.05 && age <= 1, `age ${age} at ${x},${z}`);
-      const radius = trueRadiusAt(x, z);
-      assert.ok(radius >= 0.5 && radius <= MAX_TRUE_RADIUS);
+      assert.ok(age >= 0 && age <= 1, `age ${age} at ${x},${z}`);
+      assert.ok(Math.abs(ageAt(x + 1, z) - age) < 0.5, "the field is continuous: no jumps between neighboring blocks");
+      ages.push(age);
     }
   }
-  assert.ok(Math.abs(applySCurve(0.5) - 0.5) < 1e-9, "S-curve is centered");
-  assert.equal(applySCurve(1), 1);
-  assert.ok(Math.abs(growProbability(0.5) - 0.08 / Math.pow(0.5, 1.5)) < 1e-12);
-  assert.ok(growProbability(MAX_TRUE_RADIUS) < 0.011, "giants are rare");
+  const share = (lo: number, hi: number) => ages.filter((a) => a >= lo && a < hi).length / ages.length;
+  assert.ok(share(0, 0.25) > 0.1 && share(0.75, 1.01) > 0.1, "young and ancient forest both occur");
+  assert.notEqual(ageAt(100, 100), ageAt(100, 100, { ...DEFAULT_AGE_PARAMS, offsetX: 5000, offsetZ: -3000 }));
+  assert.ok(Math.abs(applyContrast(0.5, 3) - 0.5) < 1e-9 && applyContrast(1, 3) === 1 && applyContrast(0, 3) === 0);
+  assert.ok(Math.abs(growProbability(0.5) - Math.min(1, K_DENSITY / Math.pow(0.5, 1.5))) < 1e-12);
+  assert.ok(growProbability(MAX_TRUE_RADIUS) < growProbability(0.5) / 10, "giants are far rarer than small trees");
 });
 
 test("tiny trees have foliage but no wooden branches; giants have thick limbs", () => {
@@ -216,4 +221,16 @@ test("log grain: trunk is vertical, branches run along their direction, exposed 
   }
   assert.ok(sideways > 100, `a giant has many sideways branch logs (${sideways})`);
   assert.ok(tree.barkCapped.has(0, tree.height - 1, 0), "the top of the trunk is capped");
+});
+
+test("the Molang age field computes the same thing as the TypeScript one", () => {
+  // Run the generated Molang as JavaScript, with the look-alike noise standing in for q.noise.
+  const expression = sizeClassMolang({ ...DEFAULT_AGE_PARAMS, offsetX: 1200, offsetZ: -700 }, 10, "v.originx", "v.originz");
+  const evaluate = new Function("q", "math", "v", `return ${expression};`);
+  const math = { clamp: (x: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, x)), floor: Math.floor, exp: Math.exp };
+  for (let i = 0; i < 400; i++) {
+    const x = (i * 7919) % 3000 - 1500, z = (i * 104729) % 3000 - 1500;
+    const expected = Math.min(9, Math.floor(ageAt(x, z, { ...DEFAULT_AGE_PARAMS, offsetX: 1200, offsetZ: -700 }) * 10));
+    assert.equal(evaluate({ noise: noise2 }, math, { originx: x, originz: z }), expected, `at ${x}, ${z}`);
+  }
 });

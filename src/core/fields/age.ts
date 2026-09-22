@@ -1,58 +1,88 @@
-// The forest "age" field: a smooth 2D map over the world that decides how big sequoias are
-// and how densely they grow. Ported from SequoiaTrunkPlacer.java (getAgeHeatmap and friends).
+// The forest "age" field: a smooth map over the world that decides how big sequoias are and how densely
+// they grow. Age 0 is the youngest forest, 1 the most ancient.
+//
+// The Java mod summed sin(x)*cos(z) products, which makes an axis-aligned, repeating grid: on a map it
+// looks like tartan. This version layers smooth noise at three scales, which reads like a topographic
+// map: broad hills of age (groves of similar age), medium detail, and fine tree-to-tree variety.
+// In the game the same recipe is written in Molang with q.noise; here a look-alike noise stands in.
+import { noise2 } from "./noise.ts";
 
-export const S_CURVE_STRENGTH = 3.5;
-export const K_DENSITY = 0.08;
+export const K_DENSITY = 0.245;
 export const MIN_TRUE_RADIUS = 0.5;
 export const MAX_TRUE_RADIUS = 3.85;
+/** The noise's hills are about this many input units apart (measured), so spacing / this = the divisor. */
+export const HILL_SPACING_UNITS = 1.4;
+
+export interface AgeParams {
+  /** Distance between neighboring hills of age, in blocks, for each layer; and each layer's weight. */
+  groveSpacing: number;
+  groveWeight: number;
+  detailSpacing: number;
+  detailWeight: number;
+  treeSpacing: number;
+  treeWeight: number;
+  /** Contrast: 0 = a gentle gradient, high = distinct young and ancient areas with sharp edges. */
+  contrast: number;
+  /** Shifts the whole map, so each world can show a different part of it. Set per world at build time. */
+  offsetX: number;
+  offsetZ: number;
+  /** Density law p = kDensity / radius^1.5. Higher = denser forest everywhere. */
+  kDensity: number;
+}
+
+export const DEFAULT_AGE_PARAMS: Readonly<AgeParams> = {
+  groveSpacing: 230,
+  groveWeight: 0.51,
+  detailSpacing: 86,
+  detailWeight: 0.25,
+  treeSpacing: 14,
+  treeWeight: 0.73,
+  contrast: 3,
+  offsetX: 0,
+  offsetZ: 0,
+  kDensity: K_DENSITY,
+};
 
 function clamp(value: number, low: number, high: number): number {
   return Math.max(low, Math.min(high, value));
 }
 
-/** Logistic contrast curve, renormalized so 0 maps to 0 and 1 maps to 1; result clamped to [0.05, 1]. */
-export function applySCurve(age: number, strength: number = S_CURVE_STRENGTH): number {
+/** Logistic contrast curve on 0..1, renormalized so 0 stays 0 and 1 stays 1. */
+export function applyContrast(age: number, strength: number): number {
   if (strength <= 0) return age;
   const sigmoid = (t: number) => 1 / (1 + Math.exp(-strength * t));
   const low = sigmoid(-0.5);
   const high = sigmoid(0.5);
-  return clamp((sigmoid(age - 0.5) - low) / (high - low), 0.05, 1);
+  return clamp((sigmoid(age - 0.5) - low) / (high - low), 0, 1);
 }
 
-export interface AgeParams {
-  /** Contrast of the S-curve: 0 = none; higher pushes the forest toward "all young" or "all ancient". */
-  sCurveStrength: number;
-  /** Density law p = kDensity / radius^1.5. Higher = denser forest everywhere. */
-  kDensity: number;
-  /** Weights of the three waves (~628, ~251, ~78 block wavelengths). */
-  macroAmplitude: number;
-  midAmplitude: number;
-  microAmplitude: number;
+/** The field's layers as [spacing in blocks, weight, input shift]; shifted inputs give unrelated layers. */
+export function ageLayers(params: AgeParams): [spacing: number, weight: number, shift: number][] {
+  return [
+    [params.groveSpacing, params.groveWeight, 0],
+    [params.detailSpacing, params.detailWeight, 50.5],
+    [params.treeSpacing, params.treeWeight, 91.7],
+  ];
 }
 
-export const DEFAULT_AGE_PARAMS: Readonly<AgeParams> = {
-  sCurveStrength: S_CURVE_STRENGTH,
-  kDensity: K_DENSITY,
-  macroAmplitude: 0.35,
-  midAmplitude: 0.15,
-  microAmplitude: 0.12,
-};
-
-/** Age before the contrast curve: three overlapping sin*cos waves (~628, ~251, ~78 block wavelengths). */
-export function rawAge(x: number, z: number, params: AgeParams = DEFAULT_AGE_PARAMS): number {
-  const macro = Math.sin(x * 0.01) * Math.cos(z * 0.01);
-  const mid = Math.sin((x + 150) * 0.025 + 1.2) * Math.cos((z - 90) * 0.025 + 0.8);
-  const micro = Math.sin(x * 0.08 + 0.5) * Math.cos(z * 0.08 - 0.7);
-  return clamp(
-    0.5 + params.macroAmplitude * macro + params.midAmplitude * mid + params.microAmplitude * micro,
-    0.05,
-    1,
-  );
-}
-
-/** Forest age A(x, z) in [0.05, 1]. */
+/** Forest age in 0..1 at a world position. */
 export function ageAt(x: number, z: number, params: AgeParams = DEFAULT_AGE_PARAMS): number {
-  return applySCurve(rawAge(x, z, params), params.sCurveStrength);
+  const layers = ageLayers(params);
+  let sum = 0;
+  let total = 0;
+  let power = 0;
+  for (const [spacing, weight, shift] of layers) {
+    if (weight <= 0) continue;
+    const divisor = Math.max(1, spacing) / HILL_SPACING_UNITS;
+    sum += weight * noise2((x + params.offsetX) / divisor + shift, (z + params.offsetZ) / divisor + shift);
+    total += weight;
+    power += weight * weight;
+  }
+  if (total === 0) return 0.5;
+  // A sum of layers bunches toward the middle; dividing by the root of the summed squares restores the
+  // spread a single layer has, so ancient and young extremes stay as common whatever the weights.
+  const field = clamp(sum / Math.sqrt(power), -1, 1);
+  return applyContrast((field + 1) / 2, params.contrast);
 }
 
 /** True trunk radius (without root flare) of a sequoia growing at this position. */

@@ -42,7 +42,28 @@ for (const pack of ["BP", "RP"]) rmSync(join(BUILD, pack), { recursive: true, fo
 copyPack(join(ROOT, "packs", "BP"), join(BUILD, "BP"));
 copyPack(join(ROOT, "packs", "RP"), join(BUILD, "RP"));
 
-const baked = bakeSequoias({ namespace: config.namespace, behaviorPackDir: join(BUILD, "BP") });
+const baked = bakeSequoias({
+  namespace: config.namespace,
+  behaviorPackDir: join(BUILD, "BP"),
+  worldOffset: config.worldOffset,
+});
+
+// A new version number on every build. Devices keep a copy of a pack under its version, so without
+// this a phone that has seen version 0.1.0 never downloads the textures and colors added since.
+// Each part must stay small (a 22-million patch number made the server ignore the pack), so the version
+// is 0.<days since 2026-01-01>.<two-second ticks into the day>: always increasing, never above 43,200.
+const sinceEpoch = Date.now() - Date.UTC(2026, 0, 1);
+const buildDay = Math.floor(sinceEpoch / 86400000);
+const buildTick = Math.floor((sinceEpoch % 86400000) / 2000);
+for (const pack of ["BP", "RP"]) {
+  const file = join(BUILD, pack, "manifest.json");
+  const manifest = JSON.parse(readFileSync(file, "utf8"));
+  const stamp = (version) => [version[0], buildDay, buildTick];
+  manifest.header.version = stamp(manifest.header.version);
+  for (const module of manifest.modules) module.version = stamp(module.version);
+  for (const dependency of manifest.dependencies ?? []) if (dependency.uuid) dependency.version = stamp(dependency.version);
+  writeFileSync(file, JSON.stringify(manifest, null, 2) + "\n");
+}
 
 await build({
   entryPoints: [join(ROOT, "src", "scripts", "main.ts")],

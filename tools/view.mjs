@@ -73,8 +73,8 @@ const html = `<!doctype html>
   <h2>Forest sample, seen from above</h2>
   <canvas id="forest" width="384" height="384"></canvas>
   <small id="forestCaption"></small>
-  <h2>Age field</h2>
-  <canvas id="ageMap" width="256" height="256"></canvas>
+  <h2>Age map</h2>
+  <canvas id="ageMap" width="288" height="288"></canvas>
   <small id="ageMapCaption"></small>
   <p><small>In the 3D view: drag to orbit, scroll to zoom, right-drag to pan. The blue box is a player
   for scale; the translucent slab is the ground, with the root cone visible beneath it.</small></p>

@@ -45,7 +45,8 @@ spec.planes.forEach((plane, p) => {
   for (let x = 0; x < 16; x++) {
     write(rules, `fieldcam_${p}_x${x}`, { format_version: F, "minecraft:feature_rules": {
       description: { identifier: `${ns}:fieldcam_${p}_x${x}`, places_feature: `${ns}:fieldcam_${p}` },
-      conditions: { placement_pass: "final_pass", "minecraft:biome_filter": [{ test: "has_biome_tag", operator: "==", value: "overworld" }] },
+      // A plane may be limited to one biome tag, which paints a mask of where that biome is.
+      conditions: { placement_pass: "final_pass", "minecraft:biome_filter": [{ test: "has_biome_tag", operator: "==", value: (plane.biomeTag ?? "overworld").replace("ns_", `${ns}_`) }] },
       distribution: { iterations: 16, coordinate_eval_order: "xzy", x, y: BASE_Y + 2 * p,
         z: { distribution: "fixed_grid", extent: [0, 15], step_size: 1, grid_offset: 0 } } } });
   }
@@ -56,12 +57,12 @@ run(["tools/deploy.mjs"]);
 run(["tools/server.mjs", "start"]);
 console.log("Waiting for the server to boot ...");
 await sleep(50000);
-const errors = docker(["logs", "--since", "70s", config.containerName]).split("\n").filter((l) => /ERROR/.test(l) && /fieldcam|Molang|molang|Feature/.test(l));
+const errors = docker(["logs", "--since", "70s", config.containerName]).split("\n").filter((l) => /ERROR/.test(l) && /fieldcam|Molang|molang|Feature|query/i.test(l));
 if (errors.length) console.log("Content errors:\n" + errors.slice(0, 8).join("\n"));
 
 // Only read log lines written from now on: the container's log still holds earlier captures.
 const since = new Date().toISOString();
-docker(["exec", config.containerName, "send-command", `scriptevent ${ns}:field_camera ${spec.planes.length} ${BASE_Y}`]);
+docker(["exec", config.containerName, "send-command", `scriptevent ${ns}:field_camera ${spec.planes.length} ${BASE_Y} ${spec.center ?? "origin"}`]);
 console.log("Camera running ...");
 let log = "";
 for (let i = 0; i < 40; i++) {
@@ -72,6 +73,7 @@ for (let i = 0; i < 40; i++) {
 mkdirSync(outDir, { recursive: true });
 const rows = log.split("\n").map((l) => l.match(/\[field\] (\d+) (-?\d+) (-?\d+) (\S+)/)).filter(Boolean)
   .map((m) => ({ plane: Number(m[1]), z: Number(m[2]), x0: Number(m[3]), row: m[4] }));
+const originLine = log.split("\n").find((l) => l.includes("[field] origin"));
 const seedLine = log.split("\n").find((l) => l.includes("[field] seed"));
-writeFileSync(join(outDir, "capture.json"), JSON.stringify({ spec, seed: seedLine?.split("seed ")[1] ?? null, rows }));
+writeFileSync(join(outDir, "capture.json"), JSON.stringify({ spec, seed: seedLine?.split("seed ")[1] ?? null, origin: originLine?.split("origin ")[1] ?? "0 0", rows }));
 console.log(`Captured ${rows.length} rows -> ${join(outDir, "capture.json")}${log.includes("[field] done") ? "" : "  (INCOMPLETE)"}`);

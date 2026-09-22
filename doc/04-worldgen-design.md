@@ -29,6 +29,64 @@ Still to verify, on the phone: that trees look right (rotation, void cells leavi
 trunk centered where expected). Still to build: the age-field gating in Molang, which replaces the
 throwaway rule.
 
+## What `q.noise` is (measured 2026-09-22)
+
+Molang's `q.noise(x, z)` is the one noise function available to world generation, and Mojang does not
+document what it computes. It was measured with the **field camera** (`tools/dev/field-camera.mjs`),
+which paints any Molang expression as planes of 16 wool colors during world generation, reads the
+blocks back by script, and rebuilds the image on the Mac (`tools/dev/field_camera_analyze.py`). The
+camera's self-test, a plain ramp, comes back exact.
+
+- **Smooth, and the same in every direction.** The mean change per block is equal along x and z
+  (0.859 against 0.864 bands). Contours close around hills and hollows: a topographic look.
+- **Feature size:** the sign changes about 1.42 times per input unit, so neighboring hills are about
+  **1.4 input units** apart. `q.noise(x/64, z/64)` gives hills roughly 90 blocks apart.
+- **Range and spread:** values fill −1 to 1, almost **evenly** (standard deviation 0.45; perfectly even
+  would be 0.58), not bunched near zero the way classic Perlin noise is. So `(n + 1) / 2` already spreads
+  ages across the whole range without a contrast curve.
+- **It is simplex noise.** Not classic Perlin: at whole-number inputs it is not zero, it is static. A
+  textbook 2D simplex implementation (`src/core/fields/noise.ts`) reproduces its value histogram within
+  a few percent and its feature size exactly (1.41 sign changes per unit against 1.42). Only the game's
+  permutation table is unknown, so a look-alike shows the character of a field but not a world's map.
+- **Ignores the world seed.** Two worlds with different seeds gave 100% identical planes. Every world
+  gets the same map, as with the Java mod's sine field.
+- **Does not repeat** at 256 units (a shifted copy matched 8% of blocks, which is chance).
+- **An offset gives an independent field:** `q.noise(x/s + 50.5, z/s + 50.5)` matched the original in
+  9% of blocks, chance again. That is how to get several unrelated layers.
+- **Layers add as expected:** Molang arithmetic on several `q.noise` calls works inside feature rules.
+  A sum of two or three layers becomes bell-shaped (sd 0.34, then 0.30), so a layered field needs
+  rescaling or a contrast curve to reach the extremes as often as a single layer does.
+
+Also measured: `q.heightmap(x, z)` works at the column being decorated, reads 0 about half the time 24
+blocks away (neighboring chunks not yet generated), and reads 0 at any fixed faraway point. So terrain
+cannot serve as a hash of the world seed, and nothing else in Molang depends on the seed either: a
+per-world shift of the age map has to be baked into the pack when the world is made.
+
+Consequence for the viewer: TypeScript cannot call the game's noise, so the viewer would use a
+look-alike with the same statistics. It shows the character of a forest, not the actual map of a world.
+
+## The forest age map (built 2026-09-22)
+
+Recipe, in `src/core/fields/age.ts`: three layers of simplex noise (groves, detail, tree-to-tree), each
+with a hill spacing in blocks and a weight; the weighted sum divided by the root of the summed squared
+weights, so the spread stays that of a single layer whatever the weights; mapped to 0..1; then a
+logistic contrast curve. `src/core/fields/ageMolang.ts` writes the identical recipe as a Molang
+expression from the same parameters, with `q.noise` in place of the look-alike, and a test evaluates
+that Molang as code against the TypeScript at 400 positions.
+
+Placement, in `src/bake/bake.ts`: Bedrock has no feature that chooses by condition, so each of the ten
+size classes gets a scatter that makes as many attempts per chunk as that class would grow under the
+density law (32 × `K / radius^1.5`, as iterations plus a chance), at random spots, feeding a gate
+scatter whose `iterations` is `(class here == mine and ground above water level) ? 1 : 0`. Statistically
+this is the Java scheme (attempt, read the age, size the tree, roll to grow), with the field evaluated
+about 40 times per chunk instead of 320. The gate's `y` is `q.heightmap(...) - 8` with every outer
+level at `y: 0`, which works whether nested `y` is relative or absolute.
+
+The per-world offset lives in `trailhead.config.json` (`worldOffset`), re-rolled by `npm run world:reset`.
+
+Verified with the field camera inside a real grove: the in-game class map shows all ten classes and the
+same character as the viewer, and wood appears only in the grove's chunks.
+
 ## The constraint
 
 On Java, the mod registers a `TrunkPlacer` and Minecraft calls our code while it generates each chunk.

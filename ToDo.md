@@ -37,7 +37,6 @@ Each of these is Joel's call. The item itself is further down, under the heading
 
 | decision | the choice | where |
 |---|---|---|
-| the age field | what kind of field, its scales and contrast; being worked out now with the field camera | Forest layout |
 | mossy boulders in the grove | they come with vanilla's old growth tags (today); Java had none; real Sierra groves do sit among granite | Grove biome |
 | monsters on the big limbs | skeletons spawn in the crowns (today); bug or feature | Trees |
 | what a grizzly drops | *Java: nothing, by omission* | Grizzly bear |
@@ -51,14 +50,13 @@ Each of these is Joel's call. The item itself is further down, under the heading
 
 ## Forest layout
 
-- 🟥 🌶️ Rework the age field. Today's sum of `sin·cos` products looks like tartan: each term is a grid
-  aligned with the axes, and it repeats. Joel wants a topographic, heat-map look. Measured 2026-09-22
-  with the field camera: the game's `q.noise(x, z)` is smooth, the same in every direction, not
-  repeating, the same in every world (it ignores the seed), spans −1 to 1 almost evenly, with hills
-  about 1.4 input units apart; layers add up as expected. See `doc/04-worldgen-design.md`
-- 🟥 🌶️ Trees placed by the field at world generation: size class chosen by the field in Molang,
-  density by `0.08 / radius^1.5` (Java: 32 attempts per chunk, no placement in water). Today an
-  interim rule mixes all sizes in the right proportions but with no spatial pattern
+- 🟧 💀 Age falling to zero at the grove's borders, water and other biomes included (Joel, 2026-09-22).
+  Hard: Molang cannot ask how far the biome's edge is, and terrain height sampled 24 blocks away reads 0
+  about half the time (ungenerated neighbors), so water cannot be sensed at a distance either. The
+  camera's mask of a real grove shows two kinds of border: smooth arcs, which are the contour of the
+  game's replacement noise, and jagged ones, which are vanilla biome borders. If the replacement noise
+  can be reproduced in Molang, "how far below the threshold" is a field that is zero on the smooth
+  borders and peaks in each grove's core; the jagged borders would still be invisible. Not yet tried
 - 🟧 🚲 Soil by forest age: young (age ≤ 0.20) grass, middle (to 0.50) coarse dirt, old podzol. Today
   vanilla's own noise-driven podzol and coarse dirt mix
 - 🟨 🚲 Understory spruce by age: 10 attempts per chunk; proceeds with chance `1 − ⅔·age`; a giant
@@ -104,9 +102,9 @@ Each of these is Joel's call. The item itself is further down, under the heading
 
 ## Blocks and items
 
-- 🟥 🍰 Stale textures on the phone: the stripped log is magenta and black and the sapling has no menu
-  icon. The pack's version number never changes, so the phone keeps its first copy (which would also
-  hide the grove's colors). Stamp a new version on every build
+- 🟨 🍰 Confirm on the phone that the stale textures are gone (stripped log was magenta and black, the
+  sapling had no menu icon): every build now carries a new pack version, so the phone should fetch the
+  current resource pack, the grove's colors included
 - 🟧 📦 The rest of the wood family. All 8 exist in Java; recipe yields in brackets. Textures exist for
   the door and trapdoor; the rest use planks. Each should also be flammable and usable as fuel (*Java
   registered neither*). "Good enough" for the first family release: places the right way round, right
@@ -233,6 +231,19 @@ Java builds it on the phantom: same model with the eagle texture, same circling 
 
 Kept for the record; the docs have the detail.
 
+- ✅ The forest follows an age map (2026-09-22). The Java sum of `sin·cos` products looked like tartan;
+  the new field layers simplex noise at three scales, tuned by Joel in the viewer (groves 230 blocks
+  apart at weight 0.51, detail at 86, strong tree-to-tree variation at 14 with weight 0.73, contrast 3,
+  density 0.245). One set of parameters drives the viewer and writes the Molang for the game, and a
+  test runs that Molang against the TypeScript. Each size class makes as many attempts per chunk as it
+  would grow (32 × `K / radius^1.5`) and places a tree only where the field calls for that class, on
+  dry land: the Java scheme, arranged so the field is evaluated about 40 times a chunk instead of 320.
+  Checked in-game with the field camera: all ten classes appear, in the pattern the viewer shows
+- ✅ A different map in every world (2026-09-22): `npm run world:reset` rolls a new offset for the age
+  map and the build bakes it into the pack. Molang cannot reach the world seed (tested)
+- ✅ `q.noise` identified as plain 2D simplex noise (2026-09-22), ignoring the world seed
+- ✅ A new pack version on every build (2026-09-22), `0.<day>.<time>`, so devices fetch the current
+  resource pack. Each part must stay small: a patch number of 22 million made the server ignore the pack
 - ✅ Field camera (2026-09-22, `tools/dev/field-camera.mjs`): paints any Molang expression as planes of
   wool during world generation, reads them back by script, and rebuilds the image on the Mac. Its ramp
   self-test is exact. Used to measure `q.noise`
@@ -242,8 +253,6 @@ Kept for the record; the docs have the detail.
   engine, and vanilla's wolf, fox, and rabbit spawn rules. Added: azure bluets, lily of the valley,
   dandelions (Java's rates), moss carpet on about 5% of the ground, sweet berry patches, Java's colors.
   Carries `trailhead_has_giant_sequoias`, `trailhead_grizzly_habitat`, `trailhead_eagle_habitat` for later
-- ✅ Interim forest (2026-09-21): about 1.4 sequoias per chunk, all sizes mixed, each as common as the
-  density law makes it
 - ✅ Leaf decay (2026-09-21), by the rule the generator guarantees, so trees never shed on their own;
   player-placed leaves persist; drops: sapling 2.5% (Joel's choice, the jungle rate; Java 5%), 1–2
   sticks 2%, the block with shears. *Java's leaves never decayed, whatever its docs say*

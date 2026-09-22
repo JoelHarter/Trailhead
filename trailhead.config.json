@@ -3,5 +3,9 @@
   "levelName": "trailhead-dev",
   "containerName": "trailhead-bedrock",
   "behaviorPackFolder": "trailhead_bp",
-  "resourcePackFolder": "trailhead_rp"
+  "resourcePackFolder": "trailhead_rp",
+  "worldOffset": {
+    "x": -3300,
+    "z": -8900
+  }
 }

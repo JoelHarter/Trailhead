@@ -85,17 +85,22 @@ const TREE_GROUPS = [
     ["leafReach", "Leaf reach from wood", 2, 8, 1, "steps through connected leaves; vanilla uses 6"],
   ]],
 ];
-const FOREST_GROUP = ["Forest (age field and density)", [
-  ["sCurveStrength", "Age contrast", 0, 12, 0.1, "0 = smooth gradient, high = young or ancient"],
+const FOREST_GROUP = ["Forest age map", [
+  ["groveSpacing", "Grove scale", 40, 600, 5, "blocks between neighboring hills of age: the size of a grove of similar age"],
+  ["groveWeight", "Grove strength", 0, 1, 0.01, ""],
+  ["detailSpacing", "Detail scale", 15, 250, 1, "medium features inside a grove"],
+  ["detailWeight", "Detail strength", 0, 1, 0.01, ""],
+  ["treeSpacing", "Tree-to-tree scale", 4, 60, 1, "fine variation, so neighbors differ in size"],
+  ["treeWeight", "Tree-to-tree strength", 0, 1, 0.01, ""],
+  ["contrast", "Contrast", 0, 12, 0.1, "0 = gentle gradients, high = distinct young and ancient areas"],
   ["kDensity", "Density", 0.01, 0.5, 0.005, "chance per attempt = this ÷ radius^1.5"],
-  ["macroAmplitude", "Regional wave (~628)", 0, 0.6, 0.01, ""],
-  ["midAmplitude", "Grove wave (~251)", 0, 0.6, 0.01, ""],
-  ["microAmplitude", "Tree-to-tree wave (~78)", 0, 0.6, 0.01, ""],
+  ["offsetX", "World offset x", -20000, 20000, 100, "each world shows a different part of the same endless map"],
+  ["offsetZ", "World offset z", -20000, 20000, 100, ""],
 ]];
 
 const treeParams = { ...DEFAULT_SEQUOIA_PARAMS };
 const ageParams = { ...DEFAULT_AGE_PARAMS };
-const STORAGE_KEY = "trailhead-viewer-params-v6"; // bump when parameters change meaning
+const STORAGE_KEY = "trailhead-viewer-params-v7"; // bump when parameters change meaning
 
 try {
   const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "{}");
@@ -246,7 +251,8 @@ function regenerateTree() {
 // ---------------------------------------------------------------------------------------------
 // Age map (2 km across) and forest sample (384 blocks across, 1 pixel = 1 block)
 // ---------------------------------------------------------------------------------------------
-const MAP_BLOCKS_PER_PIXEL = 8;
+const MAP_BLOCKS_PER_PIXEL = 4;
+const SIZE_CLASSES = 10; // contour lines are drawn where the tree size class changes
 const SAMPLE_SIZE = 384;
 const ATTEMPTS_PER_CHUNK = 32; // matches the Java mod's placed feature
 let sampleCenter = [0, 0];
@@ -256,13 +262,29 @@ function drawAgeMap() {
   const context = canvas.getContext("2d")!;
   const size = canvas.width;
   const image = context.createImageData(size, size);
+  // Heat map colors, young to ancient: blue, teal, green, yellow, red.
+  const STOPS = [[0, 30, 40, 120], [0.33, 40, 150, 160], [0.55, 90, 180, 70], [0.78, 235, 200, 60], [1, 200, 50, 40]];
+  const ages = new Float32Array(size * size);
   for (let py = 0; py < size; py++) {
     for (let px = 0; px < size; px++) {
-      const age = ageAt((px - size / 2) * MAP_BLOCKS_PER_PIXEL, (py - size / 2) * MAP_BLOCKS_PER_PIXEL, ageParams);
+      ages[py * size + px] = ageAt((px - size / 2) * MAP_BLOCKS_PER_PIXEL, (py - size / 2) * MAP_BLOCKS_PER_PIXEL, ageParams);
+    }
+  }
+  const band = (age) => Math.min(SIZE_CLASSES - 1, Math.floor(age * SIZE_CLASSES));
+  for (let py = 0; py < size; py++) {
+    for (let px = 0; px < size; px++) {
+      const age = ages[py * size + px];
+      let k = 1;
+      while (k < STOPS.length - 1 && age > STOPS[k][0]) k++;
+      const [a0, ...c0] = STOPS[k - 1];
+      const [a1, ...c1] = STOPS[k];
+      const f = (age - a0) / (a1 - a0);
+      // Contour line wherever the size class changes toward the right or downward, as on a topographic map.
+      const right = px + 1 < size ? ages[py * size + px + 1] : age;
+      const below = py + 1 < size ? ages[(py + 1) * size + px] : age;
+      const shade = band(right) !== band(age) || band(below) !== band(age) ? 0.62 : 1;
       const i = (py * size + px) * 4;
-      image.data[i] = 30 + 60 * age;
-      image.data[i + 1] = 60 + 180 * age;
-      image.data[i + 2] = 40 + 40 * age;
+      for (let c = 0; c < 3; c++) image.data[i + c] = (c0[c] + f * (c1[c] - c0[c])) * shade;
       image.data[i + 3] = 255;
     }
   }
@@ -278,7 +300,7 @@ function drawAgeMap() {
     2 * half,
   );
   $("ageMapCaption").textContent =
-    `${size * MAP_BLOCKS_PER_PIXEL} blocks across. Bright = old (big, sparse trees). Click to move the forest sample.`;
+    `${size * MAP_BLOCKS_PER_PIXEL} blocks across. Blue = young, red = ancient; a contour line wherever the tree size class changes. Click to move the forest sample.`;
 }
 
 function drawForestSample() {

@@ -1,5 +1,7 @@
 // Controls the dev Bedrock server: start | stop | restart | reload | probe | logs | status | reset-world | vm-stop
-import { config, docker, dockerInherit, ensureVm, inDataVolume, isRunning, lanAddresses, stopVm, vmIsRunning } from "./lib.mjs";
+import { writeFileSync } from "node:fs";
+import { join } from "node:path";
+import { ROOT, config, docker, dockerInherit, ensureVm, inDataVolume, isRunning, lanAddresses, stopVm, vmIsRunning } from "./lib.mjs";
 
 const command = process.argv[2];
 const name = config.containerName;
@@ -83,6 +85,12 @@ switch (command) {
     // Deletes the dev world so new world generation can be tested. "npm run dev" re-enables the packs.
     if (isRunning()) stop();
     inDataVolume(`rm -rf "/data/worlds/${config.levelName}"`);
+    // A new world shows a new part of the forest age map. Molang cannot read the world seed, so the
+    // shift is chosen here and built into the pack (see doc/04-worldgen-design.md).
+    const roll = () => Math.round((Math.random() * 2 - 1) * 200) * 100;
+    config.worldOffset = { x: roll(), z: roll() };
+    writeFileSync(join(ROOT, "trailhead.config.json"), JSON.stringify(config, null, 2) + "\n");
+    console.log(`New forest map offset: ${config.worldOffset.x}, ${config.worldOffset.z}`);
     console.log(`Deleted world "${config.levelName}". Run "npm run dev" to deploy packs and start fresh.`);
     break;
   }
