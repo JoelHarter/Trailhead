@@ -27,35 +27,6 @@
           "sea_material": "minecraft:water"
         }
       },
-      "minecraft:surface_material_adjustments": {
-        "adjustments": [
-          {
-            "materials": {
-              "top_material": {
-                "name": "minecraft:dirt",
-                "states": {
-                  "dirt_type": "coarse"
-                }
-              }
-            },
-            "noise_frequency_scale": 0.0625,
-            "noise_range": [
-              0.212,
-              1.0
-            ]
-          },
-          {
-            "materials": {
-              "top_material": "minecraft:podzol"
-            },
-            "noise_frequency_scale": 0.0625,
-            "noise_range": [
-              -0.115,
-              0.212
-            ]
-          }
-        ]
-      },
       "minecraft:replace_biomes": {
         "replacements": [
           {
@@ -80,8 +51,6 @@
           "forest",
           "monster",
           "overworld",
-          "taiga",
-          "mega",
           "ns_sequoia_grove",
           "ns_has_giant_sequoias",
           "ns_grizzly_habitat",

@@ -6,7 +6,7 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { type AgeParams, DEFAULT_AGE_PARAMS, MAX_TRUE_RADIUS, MIN_TRUE_RADIUS, growProbability } from "../core/fields/age.ts";
-import { sizeClassMolang } from "../core/fields/ageMolang.ts";
+import { ageMolang, sizeClassMolang } from "../core/fields/ageMolang.ts";
 import { Rng, seedFromPosition } from "../core/rng.ts";
 import { generateSequoia } from "../core/trees/sequoia.ts";
 import { StructureBuilder } from "./mcstructure.ts";
@@ -108,6 +108,7 @@ export function bakeSequoias({ namespace, behaviorPackDir, worldOffset }: BakeOp
 
   const age: AgeParams = { ...DEFAULT_AGE_PARAMS, offsetX: worldOffset?.x ?? 0, offsetZ: worldOffset?.z ?? 0 };
   writeForestRule(namespace, behaviorPackDir, classes, age);
+  writeAgeDrivenDecoration(namespace, behaviorPackDir, age);
   return { classes, bytes };
 }
 
@@ -187,6 +188,63 @@ function writeForestRule(namespace: string, behaviorPackDir: string, classes: Ba
       distribution: { iterations: 1, coordinate_eval_order: "xzy", x: 0, z: 0, y: 0 },
     },
   });
+}
+
+/**
+ * Everything else in the grove that the Java mod tied to forest age, written against the same Molang field:
+ * - soil: young (age <= 0.20) keeps grass, middle (to 0.50) coarse dirt, old podzol, per column
+ * - dandelions only in young areas (age <= 0.20)
+ * - understory spruce: 10 attempts per chunk; an attempt grows with chance 1 - 2/3 age, and is a giant
+ *   with chance 1/2 age, so spruce thin out and skew large as the forest ages
+ */
+function writeAgeDrivenDecoration(namespace: string, behaviorPackDir: string, ageParams: AgeParams) {
+  const featuresDir = join(behaviorPackDir, "features");
+  const rulesDir = join(behaviorPackDir, "feature_rules");
+  const age = ageMolang(ageParams, "v.originx", "v.originz");
+  const grove = [{ test: "has_biome_tag", operator: "==", value: `${namespace}_sequoia_grove` }];
+  const scatter = (id: string, body: Record<string, unknown>) =>
+    writeJson(join(featuresDir, `${id}.json`), { format_version: FEATURE_FORMAT, "minecraft:scatter_feature": { description: { identifier: `${namespace}:${id}` }, coordinate_eval_order: "xzy", ...body } });
+  const rule = (id: string, places: string, pass: string, distribution: Record<string, unknown>) =>
+    writeJson(join(rulesDir, `${id}.json`), { format_version: FEATURE_FORMAT, "minecraft:feature_rules": {
+      description: { identifier: `${namespace}:${id}`, places_feature: places },
+      conditions: { placement_pass: pass, "minecraft:biome_filter": grove }, distribution } });
+
+  // --- soil: walk every column of the chunk (16 x 16) and paint the top block by age
+  for (const [name, block, low, high] of [["coarse_dirt", { name: "minecraft:dirt", states: { dirt_type: "coarse" } }, 0.2, 0.5], ["podzol", "minecraft:podzol", 0.5, 1.01]] as const) {
+    writeJson(join(featuresDir, `soil_${name}_block.json`), { format_version: FEATURE_FORMAT, "minecraft:single_block_feature": {
+      description: { identifier: `${namespace}:soil_${name}_block` }, places_block: block,
+      enforce_placement_rules: false, enforce_survivability_rules: false,
+      may_replace: ["minecraft:grass_block", "minecraft:dirt", "minecraft:podzol", { name: "minecraft:dirt", states: { dirt_type: "coarse" } }] } });
+    scatter(`soil_${name}_gate`, { places_feature: `${namespace}:soil_${name}_block`,
+      iterations: `(${age} > ${low} && ${age} <= ${high}) ? 1 : 0`, x: 0, z: 0, y: "q.heightmap(v.originx, v.originz) - 1" });
+  }
+  writeJson(join(featuresDir, "soil_column.json"), { format_version: FEATURE_FORMAT, "minecraft:aggregate_feature": {
+    description: { identifier: `${namespace}:soil_column` }, early_out: "first_success",
+    features: [`${namespace}:soil_podzol_gate`, `${namespace}:soil_coarse_dirt_gate`] } });
+  scatter("soil_row", { places_feature: `${namespace}:soil_column`, iterations: 16, x: 0, y: 0,
+    z: { distribution: "fixed_grid", extent: [0, 15], step_size: 1, grid_offset: 0 } });
+  scatter("soil_chunk", { places_feature: `${namespace}:soil_row`, iterations: 16, y: 0, z: 0,
+    x: { distribution: "fixed_grid", extent: [0, 15], step_size: 1, grid_offset: 0 } });
+  rule("grove_soil", `${namespace}:soil_chunk`, "before_surface_pass", { iterations: 1, coordinate_eval_order: "xzy", x: 0, y: 0, z: 0 });
+
+  // --- dandelions: the existing patch, gated on young forest at the patch's origin
+  scatter("dandelion_young_gate", { places_feature: `${namespace}:dandelion_patch`, iterations: `(${age} <= 0.2) ? 1 : 0`, x: 0, y: 0, z: 0 });
+  rule("grove_dandelion", `${namespace}:dandelion_young_gate`, "surface_pass", { iterations: 2, coordinate_eval_order: "xzy",
+    x: { distribution: "uniform", extent: [0, 15] }, z: { distribution: "uniform", extent: [0, 15] }, y: "q.heightmap(v.worldx, v.worldz)" });
+
+  // --- understory spruce by age. One roll decides "grows at all" (1 - 2/3 age) and another "giant"
+  // (1/2 age); written as two gates tried in order with first_success, so the second is conditional.
+  const grows = `(1 - 0.6667 * ${age})`;
+  const giantShare = `(0.5 * ${age})`;
+  scatter("spruce_giant_gate", { places_feature: `${namespace}:understory_giant_spruce`,
+    iterations: `(math.random(0, 1) < ${grows} * ${giantShare}) ? 1 : 0`, x: 0, y: 0, z: 0 });
+  scatter("spruce_normal_gate", { places_feature: `${namespace}:understory_spruce`,
+    iterations: `(math.random(0, 1) < ${grows} * (1 - ${giantShare}) / (1 - ${grows} * ${giantShare})) ? 1 : 0`, x: 0, y: 0, z: 0 });
+  writeJson(join(featuresDir, "spruce_attempt.json"), { format_version: FEATURE_FORMAT, "minecraft:aggregate_feature": {
+    description: { identifier: `${namespace}:spruce_attempt` }, early_out: "first_success",
+    features: [`${namespace}:spruce_giant_gate`, `${namespace}:spruce_normal_gate`] } });
+  rule("grove_spruce", `${namespace}:spruce_attempt`, "surface_pass", { iterations: 10, coordinate_eval_order: "xzy",
+    x: { distribution: "uniform", extent: [0, 15] }, z: { distribution: "uniform", extent: [0, 15] }, y: "q.heightmap(v.worldx, v.worldz)" });
 }
 
 function writeJson(path: string, value: unknown) {

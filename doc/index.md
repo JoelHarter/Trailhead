@@ -46,3 +46,4 @@ The running checklist of what is left, feature by feature, is in [../ToDo.md](..
    still needs in-game testing.
 5. [Roadmap and open questions](05-roadmap.md) — milestones, repository layout, and decisions needed.
 6. [The sequoia tree](06-tree-design.md) — how the crown is built now, and why it departs from the Java mod.
+7. [How to play](07-how-to-play.md) — for players: installing the add-on, consoles, and Realms.

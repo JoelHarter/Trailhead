@@ -14,21 +14,21 @@ Each open item carries two marks, importance first, then difficulty.
 
 | | |
 |---|---|
-| 🟥 | critical — a defining feature, or blocking other important work |
-| 🟧 | important — a main feature |
-| 🟨 | useful — the result would be noticeably better with it |
-| ⬜ | nice — a little better in some way |
-| 🟦 | optional — not yet decided whether it's wanted at all |
 | ✅ | done |
+| 🟦 | optional — not yet decided whether it's wanted at all |
+| ⬜ | nice — a little better in some way |
+| 🟨 | useful — the result would be noticeably better with it |
+| 🟧 | important — a main feature |
+| 🟥 | critical — a defining feature, or blocking other important work |
 
 **Difficulty**
 
 | | |
 |---|---|
-| 🍰 | a slice of cake |
+| 🍰 | quick and easy |
 | 🚲 | standard work |
-| 🌶️ | spicy — real design or real care |
-| 💀 | god-tier — a project of its own |
+| 🌶️ | real design or real care |
+| 💀 | a project of its own |
 | 📦 | a parent task: no rating of its own, done when its subtasks are |
 
 ## Waiting on a decision
@@ -37,7 +37,7 @@ Each of these is Joel's call. The item itself is further down, under the heading
 
 | decision | the choice | where |
 |---|---|---|
-| mossy boulders in the grove | they come with vanilla's old growth tags (today); Java had none; real Sierra groves do sit among granite | Grove biome |
+| mossy boulders in the grove | gone with the `mega` tag; Java had none; real Sierra groves do sit among granite | Grove biome |
 | monsters on the big limbs | skeletons spawn in the crowns (today); bug or feature | Trees |
 | what a grizzly drops | *Java: nothing, by omission* | Grizzly bear |
 | where eagles spawn | *Java's docs say the canopy; its code spawns them on the ground* | Eagle |
@@ -57,11 +57,6 @@ Each of these is Joel's call. The item itself is further down, under the heading
   game's replacement noise, and jagged ones, which are vanilla biome borders. If the replacement noise
   can be reproduced in Molang, "how far below the threshold" is a field that is zero on the smooth
   borders and peaks in each grove's core; the jagged borders would still be invisible. Not yet tried
-- 🟧 🚲 Soil by forest age: young (age ≤ 0.20) grass, middle (to 0.50) coarse dirt, old podzol. Today
-  vanilla's own noise-driven podzol and coarse dirt mix
-- 🟨 🚲 Understory spruce by age: 10 attempts per chunk; proceeds with chance `1 − ⅔·age`; a giant
-  spruce with chance `½·age`, otherwise an ordinary one. Today vanilla's old growth spruces, inherited
-- 🟨 🍰 Dandelions only in young areas (age ≤ 0.20). Today everywhere on grass
 - 🟦 🌶️ Tie age partly to terrain (Molang can read ground height): real giants favor sheltered basins
   over ridges
 
@@ -71,8 +66,9 @@ Each of these is Joel's call. The item itself is further down, under the heading
   `noise_frequency_scale`), before release
 - 🟨 🍰 Check the client side on a device: sky `#78A7FF`, fog `#C0D8FF`, water `#3F76E4`, water fog
   `#050533`, grass `#49874B`, foliage `#346E42`. The server cannot see the resource pack
-- 🟨 🍰 Salmon in the grove's rivers (Java: weight 5, 1–5): check whether vanilla already provides them
-- 🟦 🍰 Mossy cobblestone boulders: keep or drop (waiting on a decision)
+- 🟦 🚲 Mossy cobblestone boulders: they came with the `mega` tag, which is gone now (waiting on a decision; if wanted, a feature of our own)
+- 🟨 🍰 Vanilla oak trees may be generating inside groves through the `forest` biome tag (oak logs were counted near groves; not yet confirmed inside them). If so, drop the tag or accept them
+- 🟨 🍰 Salmon: the `water_animal` spawns in the grove's rivers were never checked
 
 ## Trees
 
@@ -231,6 +227,12 @@ Java builds it on the phantom: same model with the eagle texture, same circling 
 
 Kept for the record; the docs have the detail.
 
+- ✅ Age-driven grove (2026-09-22): soil by forest age (grass, coarse dirt, podzol at Java's thresholds),
+  dandelions only in young forest, understory spruce thinning and skewing giant with age (10 attempts
+  a chunk, Java's chances), all written by the baker against the same Molang age field. The vanilla
+  `taiga` and `mega` tags are gone (they brought uniform spruces, boulders, and the animals), replaced
+  by our own ferns, large ferns, grass, mushrooms, dead bushes, and wolf, fox, rabbit spawn rules
+- ✅ `.mcaddon` export (`npm run addon`) and a player's guide for consoles and Realms (`doc/07-how-to-play.md`)
 - ✅ The forest follows an age map (2026-09-22). The Java sum of `sin·cos` products looked like tartan;
   the new field layers simplex noise at three scales, tuned by Joel in the viewer (groves 230 blocks
   apart at weight 0.51, detail at 86, strong tree-to-tree variation at 14 with weight 0.73, contrast 3,

@@ -82,7 +82,7 @@ system.afterEvents.scriptEventReceive.subscribe((event) => {
     const vanilla = ["minecraft:spruce_log", "minecraft:fern", "minecraft:large_fern", "minecraft:sweet_berry_bush",
       "minecraft:mossy_cobblestone", "minecraft:podzol", "minecraft:coarse_dirt", "minecraft:brown_mushroom",
       "minecraft:red_mushroom", "minecraft:deadbush", "minecraft:short_grass", "minecraft:dandelion",
-      "minecraft:azure_bluet", "minecraft:lily_of_the_valley", "minecraft:moss_carpet"];
+      "minecraft:azure_bluet", "minecraft:lily_of_the_valley", "minecraft:moss_carpet", "minecraft:oak_log", "minecraft:grass_block"];
     const tallies: string[] = [];
     for (const type of vanilla) {
       let n = 0;

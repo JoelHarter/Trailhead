@@ -1,0 +1,42 @@
+{
+  "format_version": "1.13.0",
+  "minecraft:feature_rules": {
+    "description": {
+      "identifier": "ns:grove_red_mushroom",
+      "places_feature": "ns:red_mushroom_patch"
+    },
+    "conditions": {
+      "placement_pass": "surface_pass",
+      "minecraft:biome_filter": [
+        {
+          "test": "has_biome_tag",
+          "operator": "==",
+          "value": "ns_sequoia_grove"
+        }
+      ]
+    },
+    "distribution": {
+      "iterations": 1,
+      "coordinate_eval_order": "xzy",
+      "x": {
+        "distribution": "uniform",
+        "extent": [
+          0,
+          15
+        ]
+      },
+      "z": {
+        "distribution": "uniform",
+        "extent": [
+          0,
+          15
+        ]
+      },
+      "y": "q.heightmap(v.worldx, v.worldz)",
+      "scatter_chance": {
+        "numerator": 12,
+        "denominator": 100
+      }
+    }
+  }
+}

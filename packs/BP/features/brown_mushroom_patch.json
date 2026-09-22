@@ -1,0 +1,27 @@
+{
+  "format_version": "1.13.0",
+  "minecraft:scatter_feature": {
+    "description": {
+      "identifier": "ns:brown_mushroom_patch"
+    },
+    "places_feature": "ns:brown_mushroom_block",
+    "project_input_to_floor": true,
+    "iterations": 8,
+    "coordinate_eval_order": "xzy",
+    "x": {
+      "distribution": "gaussian",
+      "extent": [
+        -5,
+        5
+      ]
+    },
+    "z": {
+      "distribution": "gaussian",
+      "extent": [
+        -5,
+        5
+      ]
+    },
+    "y": 0
+  }
+}

@@ -2,8 +2,8 @@
   "format_version": "1.13.0",
   "minecraft:feature_rules": {
     "description": {
-      "identifier": "ns:grove_dandelion",
-      "places_feature": "ns:dandelion_patch"
+      "identifier": "ns:grove_brown_mushroom",
+      "places_feature": "ns:brown_mushroom_patch"
     },
     "conditions": {
       "placement_pass": "surface_pass",
@@ -16,7 +16,7 @@
       ]
     },
     "distribution": {
-      "iterations": 2,
+      "iterations": 1,
       "coordinate_eval_order": "xzy",
       "x": {
         "distribution": "uniform",
@@ -32,7 +32,11 @@
           15
         ]
       },
-      "y": "q.heightmap(v.worldx, v.worldz)"
+      "y": "q.heightmap(v.worldx, v.worldz)",
+      "scatter_chance": {
+        "numerator": 25,
+        "denominator": 100
+      }
     }
   }
 }

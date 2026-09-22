@@ -87,7 +87,9 @@ switch (command) {
     inDataVolume(`rm -rf "/data/worlds/${config.levelName}"`);
     // A new world shows a new part of the forest age map. Molang cannot read the world seed, so the
     // shift is chosen here and built into the pack (see doc/04-worldgen-design.md).
-    const roll = () => Math.round((Math.random() * 2 - 1) * 200) * 100;
+    // Kept within a few thousand blocks: with offsets around 18,000 the age-gated rules stopped placing
+    // anything at all (2026-09-22), for reasons not understood; q.noise also loses spread far from 0.
+    const roll = () => Math.round((Math.random() * 2 - 1) * 40) * 100;
     config.worldOffset = { x: roll(), z: roll() };
     writeFileSync(join(ROOT, "trailhead.config.json"), JSON.stringify(config, null, 2) + "\n");
     console.log(`New forest map offset: ${config.worldOffset.x}, ${config.worldOffset.z}`);

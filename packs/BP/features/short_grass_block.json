@@ -1,0 +1,23 @@
+{
+  "format_version": "1.13.0",
+  "minecraft:single_block_feature": {
+    "description": {
+      "identifier": "ns:short_grass_block"
+    },
+    "places_block": "minecraft:short_grass",
+    "enforce_placement_rules": true,
+    "enforce_survivability_rules": true,
+    "may_attach_to": {
+      "bottom": [
+        "minecraft:grass_block",
+        "minecraft:podzol",
+        "minecraft:dirt",
+        "minecraft:coarse_dirt",
+        "minecraft:moss_block"
+      ]
+    },
+    "may_replace": [
+      "minecraft:air"
+    ]
+  }
+}

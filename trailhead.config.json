@@ -5,7 +5,7 @@
   "behaviorPackFolder": "trailhead_bp",
   "resourcePackFolder": "trailhead_rp",
   "worldOffset": {
-    "x": -3300,
-    "z": -8900
+    "x": 1800,
+    "z": -1700
   }
 }

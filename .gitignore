@@ -2,3 +2,4 @@ node_modules/
 build/
 .staging/
 .DS_Store
+dist/

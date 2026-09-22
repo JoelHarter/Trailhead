@@ -1,0 +1,77 @@
+{
+  "format_version": "1.13.0",
+  "minecraft:tree_feature": {
+    "description": {
+      "identifier": "ns:understory_spruce"
+    },
+    "base_block": [
+      "minecraft:dirt"
+    ],
+    "may_grow_on": [
+      "minecraft:grass_block",
+      "minecraft:dirt",
+      "minecraft:podzol",
+      "minecraft:coarse_dirt",
+      "minecraft:moss_block"
+    ],
+    "may_replace": [
+      "minecraft:air",
+      "minecraft:spruce_leaves",
+      "minecraft:oak_leaves",
+      "ns:sequoia_leaves",
+      "minecraft:short_grass",
+      "minecraft:fern",
+      "minecraft:large_fern",
+      "minecraft:tall_grass",
+      "minecraft:snow_layer",
+      "minecraft:moss_carpet",
+      "minecraft:sweet_berry_bush",
+      "minecraft:dandelion",
+      "minecraft:azure_bluet",
+      "minecraft:lily_of_the_valley",
+      "minecraft:brown_mushroom",
+      "minecraft:red_mushroom",
+      "minecraft:deadbush"
+    ],
+    "may_grow_through": [
+      "minecraft:dirt",
+      "minecraft:grass_block",
+      "minecraft:podzol",
+      "minecraft:coarse_dirt",
+      "minecraft:moss_carpet",
+      "minecraft:short_grass",
+      "minecraft:fern",
+      "minecraft:large_fern",
+      "minecraft:snow_layer"
+    ],
+    "trunk": {
+      "trunk_height": {
+        "range_min": 4,
+        "range_max": 7
+      },
+      "height_modifier": {
+        "range_min": 0,
+        "range_max": 0
+      },
+      "trunk_block": "minecraft:spruce_log",
+      "can_be_submerged": {
+        "max_depth": 1
+      }
+    },
+    "spruce_canopy": {
+      "lower_offset": {
+        "range_min": 1,
+        "range_max": 2
+      },
+      "upper_offset": {
+        "range_min": 0,
+        "range_max": 2
+      },
+      "max_radius": {
+        "range_min": 2,
+        "range_max": 3
+      },
+      "leaf_block": "minecraft:spruce_leaves"
+    }
+  }
+}

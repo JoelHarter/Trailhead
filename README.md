@@ -28,6 +28,7 @@ All commands are run from this folder.
 | `npm test` | Run the tree algorithm's tests (no game needed) | After changing `src/core/` |
 | `npm run view` | Open the 3D tree viewer in the browser, with radius and seed sliders | To look at and tune trees |
 | `npm run test:blocks` | Check leaf decay, item tags, and sapling growth on the server; results in the server log | After changing block scripts |
+| `npm run addon` | Package the add-on as `dist/Trailhead.mcaddon` for a phone, PC, or Realm | Before sharing it |
 | `npm run probe` | Generate fresh terrain on the server and count tree blocks; results in the server log | To check world generation without the phone |
 
 After `npm run dev` or a world reset, leave and rejoin the server on the phone to see changes.

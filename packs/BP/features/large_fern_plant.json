@@ -1,0 +1,37 @@
+{
+  "format_version": "1.13.0",
+  "minecraft:growing_plant_feature": {
+    "description": {
+      "identifier": "ns:large_fern_plant"
+    },
+    "growth_direction": "UP",
+    "height_distribution": [
+      [
+        2,
+        1
+      ]
+    ],
+    "body_blocks": [
+      [
+        {
+          "name": "minecraft:large_fern",
+          "states": {
+            "upper_block_bit": false
+          }
+        },
+        1
+      ]
+    ],
+    "head_blocks": [
+      [
+        {
+          "name": "minecraft:large_fern",
+          "states": {
+            "upper_block_bit": true
+          }
+        },
+        1
+      ]
+    ]
+  }
+}

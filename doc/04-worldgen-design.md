@@ -82,6 +82,17 @@ this is the Java scheme (attempt, read the age, size the tree, roll to grow), wi
 about 40 times per chunk instead of 320. The gate's `y` is `q.heightmap(...) - 8` with every outer
 level at `y: 0`, which works whether nested `y` is relative or absolute.
 
+The rest of the grove that depends on age (soil, dandelions, understory spruce) is written by the same
+baker against the same expression; see `writeAgeDrivenDecoration`. The soil walks all 256 columns of a
+chunk with two nested fixed-grid scatters (x, then z), and the giant/ordinary spruce choice is two gates
+tried in order under an `aggregate_feature` with `early_out: first_success`, since Molang temporaries
+cannot carry one random roll across features.
+
+**Offset limit.** With map offsets around 18,000 blocks, every age-gated rule stopped placing anything,
+on two worlds, while the field camera still showed a sensible class map (with the raw noise's spread
+shrunk from 0.49 to 0.35). Offsets of a few thousand work. The cause is not understood; `world:reset`
+keeps offsets within ±4000.
+
 The per-world offset lives in `trailhead.config.json` (`worldOffset`), re-rolled by `npm run world:reset`.
 
 Verified with the field camera inside a real grove: the in-game class map shows all ten classes and the
@@ -180,6 +191,7 @@ Findings from doing it:
 
 - `minecraft:replace_biomes` targets need the namespace (`minecraft:taiga`, not `taiga` as Microsoft's
   example shows).
+- **The vanilla `taiga` and `mega` tags were dropped on 2026-09-22** so that spruce, soil, and ground cover could follow the age field; what they provided is rebuilt in the pack (ground cover features, spawn rules for wolf, fox, rabbit). The boulders were not rebuilt.
 - **A custom biome inherits vanilla decoration through its tags.** With `taiga` and `mega` the grove
   received, from the game engine, giant and ordinary spruces, ferns, large ferns, grass, dead bushes,
   mushrooms, mossy cobblestone boulders, and (from the biome file's own surface settings) the podzol
